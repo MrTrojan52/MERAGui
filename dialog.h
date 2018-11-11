@@ -4,9 +4,13 @@
 #include <QDialog>
 #include "SphinxReconizer/include/SphinxRecognizer.h"
 #include <QtMqtt/QtMqtt>
-#include <map>
+#include <utility>
+#include <vector>
 #include "connectiondialog.h"
+#include "SwitchWidget/include/switch.h"
 
+using std::vector;
+using std::pair;
 namespace Ui {
 class Dialog;
 }
@@ -23,20 +27,22 @@ public slots:
     void onRecognize(string);
 
 private slots:
-    void on_pushButton_clicked();
     void updateLogStateChange();
     void brokerDisconnected();
     void replyFinished(QNetworkReply*);
     void connectionDialogAccepted();
     void connectionDialogRejected();
-
+    void generateControls();
 
 private:
+    void initMQTTClient();
+    void getAllFeeds();
     Ui::Dialog *ui;
     ConnectionData _cData;
     SphinxRecognizer * _recognizer;
     QMqttClient * _mclient;
-    std::map<QString, QString> feeds;
+    vector<pair<QString, QString>> feeds;
+    vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg;
 };
 
