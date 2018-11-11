@@ -109,7 +109,7 @@ void Dialog::getAllFeeds() {
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
-    manager->get(QNetworkRequest(QUrl("https://io.adafruit.com/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
+    manager->get(QNetworkRequest(QUrl("http://io.adafruit.com/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
 }
 
 void Dialog::generateControls() {
