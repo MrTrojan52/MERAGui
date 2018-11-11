@@ -13,6 +13,7 @@ class SphinxRecognizer: public QObject {
 private:
     ps_decoder_t * _ps;
     cmd_ln_t * _config;
+    ad_rec_t * _ad;
 
 public:
     SphinxRecognizer(string hmm_path, string dict_path, string mdef_path, string grammar_path = "") {
@@ -30,9 +31,12 @@ public:
 
     }
 
-    virtual void recognize_from_microphone(string from_device = "plughw:1,0") const;
+    virtual void recognize_from_microphone(string from_device = "plughw:1,0");
     virtual void setConfig(cmd_ln_t * config);
-    virtual ~SphinxRecognizer() = default;
+    virtual ~SphinxRecognizer() {
+        cmd_ln_free_r(this->_config);
+        ad_close(_ad);
+    };
 signals:
     void recognized(string text) const;
 

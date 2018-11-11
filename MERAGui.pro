@@ -35,13 +35,16 @@ SOURCES += \
         main.cpp \
         dialog.cpp \        
         SphinxReconizer/src/SphinxRecognizer.cpp \
-    connectiondialog.cpp
+    connectiondialog.cpp \
+    SwitchWidget/src/switch.cpp
 
 HEADERS += \
         dialog.h \
         SphinxReconizer/include/SphinxRecognizer.h \
     connectiondialog.h \
-    connectiondata.h
+    connectiondata.h \
+    SwitchWidget/include/switch.h \
+    SwitchWidget/include/style.h
 
 FORMS += \
         dialog.ui \

@@ -1,18 +1,18 @@
 #include "SphinxReconizer/include/SphinxRecognizer.h"
 
 
-void SphinxRecognizer::recognize_from_microphone(string from_device) const {
+void SphinxRecognizer::recognize_from_microphone(string from_device) {
     if(this->_ps != NULL) {
-        ad_rec_t *ad;
+
         int16 adbuf[2048];
         uint8 utt_started, in_speech;
         int32 k;
         char const *hyp;
-        if ((ad = ad_open_dev(from_device.c_str(),
+        if ((this->_ad = ad_open_dev(from_device.c_str(),
                               (int) cmd_ln_float32_r(this->_config,
                                                      "-samprate"))) == NULL)
             E_FATAL("Failed to open audio device\n");
-        if (ad_start_rec(ad) < 0)
+        if (ad_start_rec(this->_ad) < 0)
             E_FATAL("Failed to start recording\n");
 
         if (ps_start_utt(this->_ps) < 0)
@@ -21,7 +21,7 @@ void SphinxRecognizer::recognize_from_microphone(string from_device) const {
         E_INFO("Ready....\n");
 
         for (;;) {
-            if ((k = ad_read(ad, adbuf, 2048)) < 0)
+            if ((k = ad_read(this->_ad, adbuf, 2048)) < 0)
                 E_FATAL("Failed to read audio\n");
             ps_process_raw(this->_ps, adbuf, k, FALSE, FALSE);
             in_speech = ps_get_in_speech(this->_ps);
@@ -51,7 +51,7 @@ void SphinxRecognizer::recognize_from_microphone(string from_device) const {
 
             select(0, NULL, NULL, NULL, &tmo);
         }
-        ad_close(ad);
+        ad_close(this->_ad);
     }
 }
 
