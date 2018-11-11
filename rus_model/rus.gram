@@ -1,0 +1,8 @@
+#JSGF V1.0;
+grammar SH;
+public <cmd> = <name> <action> <obj> <pretext> <where>;
+<name> = ( Сфинкс);
+<action> = ( включи | выключи | погаси | отключи);
+<obj> = ( лампу | лампочку | розетку);
+<pretext> = ( в | на);
+<where> = ( зале | кухне | туалете);
