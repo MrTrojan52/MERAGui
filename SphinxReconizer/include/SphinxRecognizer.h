@@ -40,6 +40,8 @@ public:
 signals:
     void recognized(string text) const;
 
+public slots:
+    void startRecognition(string from_device = "plughw:1,0");
 
 
 };

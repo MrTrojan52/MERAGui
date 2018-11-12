@@ -22,7 +22,8 @@ class Dialog : public QDialog
 public:
     explicit Dialog(QWidget *parent = nullptr);
     ~Dialog();
-
+signals:
+    void startRecognition(string from_device = "plughw:1,0");
 public slots:
     void onRecognize(string);
 
@@ -37,6 +38,7 @@ private slots:
 private:
     void initMQTTClient();
     void getAllFeeds();
+    Switch* find_switch(QString topic);
     Ui::Dialog *ui;
     ConnectionData _cData;
     SphinxRecognizer * _recognizer;
@@ -44,6 +46,7 @@ private:
     vector<pair<QString, QString>> feeds;
     vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg;
+    QThread* _recognizeThread;
 };
 
 #endif // DIALOG_H

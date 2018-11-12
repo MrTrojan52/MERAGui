@@ -20,17 +20,12 @@ Dialog::~Dialog()
     delete _recognizer;
     delete cdlg;
     delete _mclient;
+
+    _recognizeThread->exit();
+    delete _recognizeThread;
+    for(size_t i = 0; i < vecSwitch.size(); ++i)
+        delete vecSwitch[i];
 }
-
-
-//    this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
-//    connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
-//    this->_recognizer->recognize_from_microphone();
-    //_mclient->connectToHost();
-//    _mclient->publish(QString("Trojan52/feeds/kitchen.lamp-on-the-kitchen-1"), "OFF");
-
-
-
 
 void Dialog::onRecognize(string text) {
     qDebug() << text.c_str();
@@ -44,12 +39,12 @@ void Dialog::updateLogStateChange() {
     qDebug() << "State changed to " << _mclient->state();
     if(_mclient->state() == QMqttClient::Connected) {
 
-        //_mclient->publish(QString("Trojan52/feeds/kitchen.lampa-na-kukhnie-1"), "OFF");
-//        auto subscription = _mclient->subscribe(QString("Trojan52/feeds/+"));
-//        if (!subscription) {
-//                QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
-//                return;
-//            }
+
+        auto subscription = _mclient->subscribe(QString(_cData.Username + "/feeds/+"));
+        if (!subscription) {
+                QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
+                return;
+            }
     }
 }
 
@@ -81,7 +76,7 @@ void Dialog::initMQTTClient() {
     _mclient->setPort(_cData.Port.toInt());
     _mclient->setUsername(_cData.Username);
     _mclient->setPassword(_cData.Password); //"36d27d262cda42cf8e357bb722795f72"
-    connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
+    connect(_mclient, &QMqttClient::messageReceived, this, [](const QByteArray &message, const QMqttTopicName &topic) {
             const QString content = QDateTime::currentDateTime().toString()
                         + QLatin1String(" Received Topic: ")
                         + topic.name()
@@ -101,6 +96,19 @@ void Dialog::initMQTTClient() {
                         + message
                         + QLatin1Char('\n');
             ui->editLog->insertPlainText(content);
+            Switch* tSwitch = nullptr;
+            tSwitch = find_switch(topic.name());
+            if(tSwitch){
+                tSwitch->blockSignals(true);
+                int checked = Qt::CheckState::Unchecked;
+                if(message == "ON")
+                    checked = Qt::CheckState::Checked;
+                else if(message == "OFF")
+                    checked = Qt::CheckState::Unchecked;
+                if(tSwitch->checkState() != checked)
+                    tSwitch->setChecked(checked);
+                tSwitch->blockSignals(false);
+            }
         });
     _mclient->connectToHost();
 }
@@ -117,9 +125,23 @@ void Dialog::generateControls() {
     for(size_t i = 0; i < feeds.size(); ++i) {
         vecSwitch[i] = new Switch(feeds[i].first);
         vecSwitch[i]->setLayoutDirection(Qt::RightToLeft);
+        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + feeds[i].second);
         ui->verticalLayout->addWidget(vecSwitch[i]);
         connect(vecSwitch[i], &Switch::toggled, this, [i, this](bool checked) -> void {
                     _mclient->publish(QString(_cData.Username + "/feeds/" + feeds[i].second), checked ? "ON" : "OFF");
                 });
     }
+    this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
+    _recognizeThread = new QThread;
+    this->_recognizer->moveToThread(_recognizeThread);
+    connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
+    connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
+    _recognizeThread->start();
+    emit this->startRecognition();
+}
+
+Switch * Dialog::find_switch(QString topic) {
+    return *(std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
+        return s->accessibleDescription() == topic;
+    }));
 }

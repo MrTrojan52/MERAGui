@@ -60,3 +60,7 @@ void SphinxRecognizer::setConfig(cmd_ln_t * config) {
     cmd_ln_free_r(this->_config);
     this->_config = config;
 }
+
+void SphinxRecognizer::startRecognition(string from_device) {
+    recognize_from_microphone(from_device);
+}
