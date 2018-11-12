@@ -38,6 +38,7 @@ private slots:
 private:
     void initMQTTClient();
     void getAllFeeds();
+    void executeCommand(std::map<QString,QString>&);
     Switch* find_switch(QString topic);
     Ui::Dialog *ui;
     ConnectionData _cData;

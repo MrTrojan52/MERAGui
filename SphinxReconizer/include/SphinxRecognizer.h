@@ -6,7 +6,7 @@
 #include <string>
 #include <QDebug>
 #include <QObject>
-
+#include "sphinxbase/jsgf.h"
 using std::string;
 class SphinxRecognizer: public QObject {
     Q_OBJECT
@@ -36,7 +36,7 @@ public:
     virtual ~SphinxRecognizer() {
         cmd_ln_free_r(this->_config);
         ad_close(_ad);
-    };
+    }
 signals:
     void recognized(string text) const;
 
