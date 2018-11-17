@@ -36,7 +36,9 @@ SOURCES += \
         dialog.cpp \        
         SphinxReconizer/src/SphinxRecognizer.cpp \
     connectiondialog.cpp \
-    SwitchWidget/src/switch.cpp
+    SwitchWidget/src/switch.cpp \
+    Device/src/ADevice.cpp \
+    Device/src/switchdevice.cpp
 
 HEADERS += \
         dialog.h \
@@ -44,7 +46,10 @@ HEADERS += \
     connectiondialog.h \
     connectiondata.h \
     SwitchWidget/include/switch.h \
-    SwitchWidget/include/style.h
+    SwitchWidget/include/style.h \
+    Device/include/IDevice.h \
+    Device/include/adevice.h \
+    Device/include/switchdevice.h
 
 FORMS += \
         dialog.ui \

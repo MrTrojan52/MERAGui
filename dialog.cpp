@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #define MODELDIR "/home/trojan52/Qt/Projects/MERAGui/rus_model"
 #include <QMessageBox>
+#include "Device/include/switchdevice.h"
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -76,10 +77,10 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     QJsonArray jA = jDocument.array();
     for(int i = 0; i < jA.size(); ++i) {
         QJsonObject jO = jA.at(i).toObject();
-        feeds.emplace_back(jO.value("name").toString(), jO.value("key").toString());
+        devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), jO.value("group").toObject().value("name").toString(), jO.value("key").toString()));
     }
     reply->deleteLater();
-    feeds.shrink_to_fit();
+    devices.shrink_to_fit();
     generateControls();
 }
 
@@ -140,18 +141,19 @@ void Dialog::getAllFeeds() {
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
-    manager->get(QNetworkRequest(QUrl("http://io.adafruit.com/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
+    manager->get(QNetworkRequest(QUrl("http://" + _cData.Host  + "/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
 }
 
 void Dialog::generateControls() {
-    vecSwitch.resize(feeds.size());
-    for(size_t i = 0; i < feeds.size(); ++i) {
-        vecSwitch[i] = new Switch(feeds[i].first);
+    vecSwitch.resize(devices.size());
+    for(size_t i = 0; i < devices.size(); ++i) {
+        vecSwitch[i] = new Switch(devices[i]->getName());
         vecSwitch[i]->setLayoutDirection(Qt::RightToLeft);
-        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + feeds[i].second);
+        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + devices[i]->getFeed());
         ui->verticalLayout->addWidget(vecSwitch[i]);
         connect(vecSwitch[i], &Switch::toggled, this, [i, this](bool checked) -> void {
-                    _mclient->publish(QString(_cData.Username + "/feeds/" + feeds[i].second), checked ? "ON" : "OFF");
+                    devices[i]->setValue(checked ? "ON" : "OFF");
+                    _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
                 });
     }
     this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
@@ -160,11 +162,16 @@ void Dialog::generateControls() {
     connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
     connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
     _recognizeThread->start();
-    emit this->startRecognition();
+    emit this->startRecognition("plughw:2,0");
 }
 
 Switch * Dialog::find_switch(QString topic) {
     return *(std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
         return s->accessibleDescription() == topic;
     }));
+}
+
+void Dialog::on_tbRecognizeSettings_clicked()
+{
+
 }

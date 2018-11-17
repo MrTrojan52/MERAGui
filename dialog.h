@@ -8,7 +8,7 @@
 #include <vector>
 #include "connectiondialog.h"
 #include "SwitchWidget/include/switch.h"
-
+#include "Device/include/adevice.h"
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -35,6 +35,8 @@ private slots:
     void connectionDialogRejected();
     void generateControls();
 
+    void on_tbRecognizeSettings_clicked();
+
 private:
     void initMQTTClient();
     void getAllFeeds();
@@ -44,7 +46,7 @@ private:
     ConnectionData _cData;
     SphinxRecognizer * _recognizer;
     QMqttClient * _mclient;
-    vector<pair<QString, QString>> feeds;
+    vector<ADevice*> devices;
     vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg;
     QThread* _recognizeThread;

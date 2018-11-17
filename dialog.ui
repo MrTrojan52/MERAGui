@@ -14,6 +14,23 @@
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item alignment="Qt::AlignRight">
+    <widget class="QToolButton" name="tbRecognizeSettings">
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>Настройки распознавания</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../Изображения/gear.png</normaloff>../../../Изображения/gear.png</iconset>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTextEdit" name="editLog"/>
    </item>
