@@ -9,6 +9,7 @@
 #include "connectiondialog.h"
 #include "SwitchWidget/include/switch.h"
 #include "Device/include/adevice.h"
+#include "recognizersettingsdialog.h"
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -49,7 +50,8 @@ private:
     vector<ADevice*> devices;
     vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg;
-    QThread* _recognizeThread;
+    RecognizerSettingsDialog* rsDlg;
+    QThread* _recognizeThread = nullptr;
 };
 
 #endif // DIALOG_H

@@ -2,9 +2,10 @@
 #include "ui_connectiondialog.h"
 #include <QSettings>
 #include <QVariant>
-ConnectionDialog::ConnectionDialog(QWidget *parent) :
+ConnectionDialog::ConnectionDialog(QWidget *parent, QString settings_file) :
     QDialog(parent),
-    ui(new Ui::ConnectionDialog)
+    ui(new Ui::ConnectionDialog),
+    _sfilename(settings_file)
 {
     ui->setupUi(this);
     ui->editPort->setValidator(new QIntValidator(1,999999));

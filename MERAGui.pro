@@ -38,7 +38,8 @@ SOURCES += \
     connectiondialog.cpp \
     SwitchWidget/src/switch.cpp \
     Device/src/ADevice.cpp \
-    Device/src/switchdevice.cpp
+    Device/src/switchdevice.cpp \
+    recognizersettingsdialog.cpp
 
 HEADERS += \
         dialog.h \
@@ -49,11 +50,13 @@ HEADERS += \
     SwitchWidget/include/style.h \
     Device/include/IDevice.h \
     Device/include/adevice.h \
-    Device/include/switchdevice.h
+    Device/include/switchdevice.h \
+    recognizersettingsdialog.h
 
 FORMS += \
         dialog.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    recognizersettingsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

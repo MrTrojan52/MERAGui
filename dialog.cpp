@@ -22,8 +22,11 @@ Dialog::~Dialog()
     delete cdlg;
     delete _mclient;
 
-    _recognizeThread->exit();
-    delete _recognizeThread;
+
+    if(_recognizeThread) {
+        _recognizeThread->exit();
+        delete _recognizeThread;
+    }
     for(size_t i = 0; i < vecSwitch.size(); ++i)
         delete vecSwitch[i];
 }
@@ -100,16 +103,6 @@ void Dialog::initMQTTClient() {
     _mclient->setPort(_cData.Port.toInt());
     _mclient->setUsername(_cData.Username);
     _mclient->setPassword(_cData.Password); //"36d27d262cda42cf8e357bb722795f72"
-//    connect(_mclient, &QMqttClient::messageReceived, this, [](const QByteArray &message, const QMqttTopicName &topic) {
-//            const QString content = QDateTime::currentDateTime().toString()
-//                        + QLatin1String(" Received Topic: ")
-//                        + topic.name()
-//                        + QLatin1String(" Message: ")
-//                        + message
-//                        + QLatin1Char('\n');
-
-//            qDebug() << content;
-//        });
     connect(_mclient, &QMqttClient::stateChanged, this, &Dialog::updateLogStateChange);
     connect(_mclient, &QMqttClient::disconnected, this, &Dialog::brokerDisconnected);
     connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
@@ -156,13 +149,13 @@ void Dialog::generateControls() {
                     _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
                 });
     }
-    this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
-    _recognizeThread = new QThread;
-    this->_recognizer->moveToThread(_recognizeThread);
-    connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
-    connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
-    _recognizeThread->start();
-    emit this->startRecognition("plughw:2,0");
+//    this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
+//    _recognizeThread = new QThread;
+//    this->_recognizer->moveToThread(_recognizeThread);
+//    connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
+//    connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
+//    _recognizeThread->start();
+//    emit this->startRecognition("plughw:CARD=Camera,DEV=0");
 }
 
 Switch * Dialog::find_switch(QString topic) {
@@ -173,5 +166,6 @@ Switch * Dialog::find_switch(QString topic) {
 
 void Dialog::on_tbRecognizeSettings_clicked()
 {
-
+    rsDlg = new RecognizerSettingsDialog(this);
+    rsDlg->show();
 }

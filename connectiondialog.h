@@ -15,7 +15,7 @@ class ConnectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ConnectionDialog(QWidget *parent = nullptr);
+    ConnectionDialog(QWidget *parent = nullptr, QString settings_file = "settings.ini");
     ConnectionData getData();
     ~ConnectionDialog();
 
