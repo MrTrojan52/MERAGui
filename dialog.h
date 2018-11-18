@@ -38,6 +38,8 @@ private slots:
 
     void on_tbRecognizeSettings_clicked();
 
+    void on_psbStartRecognize_toggled(bool checked);
+
 private:
     void initMQTTClient();
     void getAllFeeds();
@@ -45,13 +47,14 @@ private:
     Switch* find_switch(QString topic);
     Ui::Dialog *ui;
     ConnectionData _cData;
-    SphinxRecognizer * _recognizer;
-    QMqttClient * _mclient;
+    SphinxRecognizer * _recognizer = nullptr;
+    QMqttClient * _mclient = nullptr;
     vector<ADevice*> devices;
     vector<Switch*> vecSwitch;
-    ConnectionDialog* cdlg;
-    RecognizerSettingsDialog* rsDlg;
+    ConnectionDialog* cdlg = nullptr;
+    RecognizerSettingsDialog* rsDlg = nullptr;
     QThread* _recognizeThread = nullptr;
+    QString _sfilename = "settings.ini";
 };
 
 #endif // DIALOG_H

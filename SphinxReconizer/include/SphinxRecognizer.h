@@ -14,6 +14,7 @@ private:
     ps_decoder_t * _ps;
     cmd_ln_t * _config;
     ad_rec_t * _ad;
+    bool _recognizeStopped = false;
 
 public:
     SphinxRecognizer(string hmm_path, string dict_path, string mdef_path, string grammar_path = "") {
@@ -30,7 +31,7 @@ public:
         }
 
     }
-
+    void stopRecognition();
     virtual void recognize_from_microphone(string from_device = "plughw:1,0");
     virtual void setConfig(cmd_ln_t * config);
     virtual ~SphinxRecognizer() {
@@ -42,8 +43,6 @@ signals:
 
 public slots:
     void startRecognition(string from_device = "plughw:1,0");
-
-
 };
 
 

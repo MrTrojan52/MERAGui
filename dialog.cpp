@@ -1,6 +1,5 @@
 #include "dialog.h"
 #include "ui_dialog.h"
-#define MODELDIR "/home/trojan52/Qt/Projects/MERAGui/rus_model"
 #include <QMessageBox>
 #include "Device/include/switchdevice.h"
 Dialog::Dialog(QWidget *parent) :
@@ -8,7 +7,7 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    cdlg = new ConnectionDialog(this);
+    cdlg = new ConnectionDialog(this, _sfilename);
     cdlg->setModal(true);
     cdlg->show();
     connect(cdlg, &ConnectionDialog::accepted, this, &Dialog::connectionDialogAccepted);
@@ -25,7 +24,7 @@ Dialog::~Dialog()
 
     if(_recognizeThread) {
         _recognizeThread->exit();
-        delete _recognizeThread;
+        _recognizeThread->deleteLater();
     }
     for(size_t i = 0; i < vecSwitch.size(); ++i)
         delete vecSwitch[i];
@@ -149,13 +148,6 @@ void Dialog::generateControls() {
                     _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
                 });
     }
-//    this->_recognizer = new SphinxRecognizer(MODELDIR "/zero_ru.cd_semi_4000", MODELDIR "/rus_sh_dict", MODELDIR "/zero_ru.cd_semi_4000/mdef", MODELDIR "/rus.gram");
-//    _recognizeThread = new QThread;
-//    this->_recognizer->moveToThread(_recognizeThread);
-//    connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
-//    connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
-//    _recognizeThread->start();
-//    emit this->startRecognition("plughw:CARD=Camera,DEV=0");
 }
 
 Switch * Dialog::find_switch(QString topic) {
@@ -166,6 +158,51 @@ Switch * Dialog::find_switch(QString topic) {
 
 void Dialog::on_tbRecognizeSettings_clicked()
 {
-    rsDlg = new RecognizerSettingsDialog(this);
+    rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     rsDlg->show();
+}
+
+void Dialog::on_psbStartRecognize_toggled(bool checked)
+{
+    if(checked) {
+        ui->psbStartRecognize->setText("Остановить распознавание");
+        QSettings sett(_sfilename, QSettings::IniFormat);
+        QString model = sett.value("SPHINX/MODEL").toString();
+        QString mdef = sett.value("SPHINX/MDEF").toString();
+        QString dict = sett.value("SPHINX/DICTIONARY").toString();
+        QString gramm = sett.value("SPHINX/GRAMMAR").toString();
+        QString aDev = sett.value("SPHINX/ADEVICE").toString();
+        if(model.isEmpty() || mdef.isEmpty() || dict.isEmpty() || gramm.isEmpty() || aDev.isEmpty())
+        {
+            ui->psbStartRecognize->setChecked(false);
+            QMessageBox::critical(this, "Ошибка", "Невозможно начать распознавание!\nЗаданы не все параметры распознавания.");
+            if(rsDlg) {
+                rsDlg->show();
+                return;
+            } else {
+                rsDlg = new RecognizerSettingsDialog(this, _sfilename);
+                rsDlg->show();
+                return;
+            }
+        }
+        if(_recognizeThread) {
+            _recognizeThread->exit();
+            delete _recognizeThread;
+        }
+
+        if(_recognizer)
+            delete _recognizer;
+
+        this->_recognizer = new SphinxRecognizer(model.toStdString(), dict.toStdString(), mdef.toStdString(), gramm.toStdString());
+        _recognizeThread = new QThread;
+        this->_recognizer->moveToThread(_recognizeThread);
+        connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
+        connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
+        _recognizeThread->start();
+        emit this->startRecognition(aDev.toStdString());
+    } else {
+        ui->psbStartRecognize->setText("Запустить распознавание");
+        this->_recognizer->stopRecognition();
+        QMessageBox::information(this, "Информация", "Сфинкс больше не подслушивает за вами :)");
+    }
 }

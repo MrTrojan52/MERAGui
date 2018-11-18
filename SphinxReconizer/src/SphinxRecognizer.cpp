@@ -2,6 +2,7 @@
 
 
 void SphinxRecognizer::recognize_from_microphone(string from_device) {
+    this->_recognizeStopped = false;
     if(this->_ps != NULL) {
 
         int16 adbuf[2048];
@@ -21,6 +22,7 @@ void SphinxRecognizer::recognize_from_microphone(string from_device) {
         E_INFO("Ready....\n");
 
         for (;;) {
+            if(_recognizeStopped) break;
             if ((k = ad_read(this->_ad, adbuf, 2048)) < 0)
                 E_FATAL("Failed to read audio\n");
             ps_process_raw(this->_ps, adbuf, k, FALSE, FALSE);
@@ -63,4 +65,8 @@ void SphinxRecognizer::setConfig(cmd_ln_t * config) {
 
 void SphinxRecognizer::startRecognition(string from_device) {
     recognize_from_microphone(from_device);
+}
+
+void SphinxRecognizer::stopRecognition() {
+    _recognizeStopped = true;
 }
