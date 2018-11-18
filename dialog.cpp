@@ -186,12 +186,13 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
             }
         }
         if(_recognizeThread) {
-            _recognizeThread->exit();
+            _recognizeThread->quit();
+            _recognizeThread->wait();
             delete _recognizeThread;
         }
 
         if(_recognizer)
-            delete _recognizer;
+            _recognizer->deleteLater();
 
         this->_recognizer = new SphinxRecognizer(model.toStdString(), dict.toStdString(), mdef.toStdString(), gramm.toStdString());
         _recognizeThread = new QThread;
