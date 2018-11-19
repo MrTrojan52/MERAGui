@@ -10,6 +10,13 @@ Dialog::Dialog(QWidget *parent) :
     addButton = new QToolButton(this);
     addButton->setText("+");
     addButton->setToolTip("Добавить устройство в группу");
+    addButton->setIcon(QIcon(":/images/assets/plus.png"));
+    QFile addBtnStyleFile(":/styles/assets/PlusButton.qss");
+    addBtnStyleFile.open(QFile::ReadOnly);
+    addButton->setStyleSheet(addBtnStyleFile.readAll());
+    addButton->resize(20,20);
+    addButton->setIconSize(QSize(20,20));
+    addButton->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);

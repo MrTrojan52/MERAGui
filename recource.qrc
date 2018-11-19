@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>assets/gear.png</file>
+        <file>assets/plus.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>assets/PlusButton.qss</file>
+    </qresource>
+</RCC>
