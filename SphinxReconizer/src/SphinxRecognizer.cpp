@@ -53,6 +53,7 @@ void SphinxRecognizer::recognize_from_microphone(string from_device) {
 
             select(0, NULL, NULL, NULL, &tmo);
         }
+        ad_stop_rec(this->_ad);
         ad_close(this->_ad);
     }
 }
@@ -69,4 +70,8 @@ void SphinxRecognizer::startRecognition(string from_device) {
 
 void SphinxRecognizer::stopRecognition() {
     _recognizeStopped = true;
+}
+
+bool SphinxRecognizer::isRecording() {
+    return !this->_recognizeStopped;
 }

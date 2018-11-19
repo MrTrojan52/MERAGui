@@ -22,10 +22,10 @@ RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString sett
     ui->cmbAudioDevice->addItems(devices);
     if(devices.empty())
         QMessageBox::critical(this, "Ошибка", "Отсутствуют устройства записи");
-    connect(ui->leModel, SIGNAL(textEdited(QString)), this, SLOT(fieldEdited(QString)));
-    connect(ui->leMdef, SIGNAL(textEdited(QString)), this, SLOT(fieldEdited(QString)));
-    connect(ui->leDictionary, SIGNAL(textEdited(QString)), this, SLOT(fieldEdited(QString)));
-    connect(ui->leGramm, SIGNAL(textEdited(QString)), this, SLOT(fieldEdited(QString)));
+    connect(ui->leModel, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
+    connect(ui->leMdef, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
+    connect(ui->leDictionary, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
+    connect(ui->leGramm, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     fillFieldsFromIniFile();
 }
 

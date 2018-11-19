@@ -200,7 +200,7 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
         QString gramm = sett.value("SPHINX/GRAMMAR").toString();
         QString aDev = sett.value("SPHINX/ADEVICE").toString();
         if(model.isEmpty() || mdef.isEmpty() || dict.isEmpty() || gramm.isEmpty() || aDev.isEmpty())
-        {
+        {         
             ui->psbStartRecognize->setChecked(false);
             QMessageBox::critical(this, "Ошибка", "Невозможно начать распознавание!\nЗаданы не все параметры распознавания.");
             if(rsDlg) {
@@ -230,8 +230,8 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
         emit this->startRecognition(aDev.toStdString());
     } else {
         ui->psbStartRecognize->setText("Запустить распознавание");
-        this->_recognizer->stopRecognition();
-        QMessageBox::information(this, "Информация", "Сфинкс больше не подслушивает за вами :)");
+        if(this->_recognizer)
+            this->_recognizer->stopRecognition();
     }
 }
 

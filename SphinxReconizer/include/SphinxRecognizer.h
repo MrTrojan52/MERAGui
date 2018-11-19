@@ -11,10 +11,10 @@ using std::string;
 class SphinxRecognizer: public QObject {
     Q_OBJECT
 private:
-    ps_decoder_t * _ps;
-    cmd_ln_t * _config;
-    ad_rec_t * _ad;
-    bool _recognizeStopped = false;
+    ps_decoder_t * _ps = nullptr;
+    cmd_ln_t * _config = nullptr;
+    ad_rec_t * _ad = nullptr;
+    bool _recognizeStopped = true;
 
 public:
     SphinxRecognizer(string hmm_path, string dict_path, string mdef_path, string grammar_path = "") {
@@ -34,9 +34,13 @@ public:
     void stopRecognition();
     virtual void recognize_from_microphone(string from_device = "plughw:1,0");
     virtual void setConfig(cmd_ln_t * config);
+    bool isRecording();
     virtual ~SphinxRecognizer() {
+        free(_ps);
         cmd_ln_free_r(this->_config);
-        ad_close(_ad);
+        if(!_recognizeStopped) {
+            ad_close(_ad);
+        }
     }
 signals:
     void recognized(string text) const;
