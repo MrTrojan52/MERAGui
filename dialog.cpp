@@ -7,11 +7,17 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    addButton = new QToolButton(this);
+    addButton->setText("+");
+    addButton->setToolTip("Добавить устройство в группу");
+    ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
+    addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
     cdlg->setModal(true);
     cdlg->show();
     connect(cdlg, &ConnectionDialog::accepted, this, &Dialog::connectionDialogAccepted);
     connect(cdlg, &ConnectionDialog::rejected, this, &Dialog::connectionDialogRejected);
+    connect(addButton, &QToolButton::clicked, this, &Dialog::addButtonClicked);
 }
 
 Dialog::~Dialog()
@@ -79,7 +85,18 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     QJsonArray jA = jDocument.array();
     for(int i = 0; i < jA.size(); ++i) {
         QJsonObject jO = jA.at(i).toObject();
-        devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), jO.value("group").toObject().value("name").toString(), jO.value("key").toString()));
+        QString group = jO.value("group").toObject().value("name").toString();
+        devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), group, jO.value("key").toString()));
+        bool tabExists = false;
+        for(int i = 0; i < ui->tabDevices->count(); ++i) {
+            if(ui->tabDevices->tabText(i) == group)
+            {
+                tabExists = true;
+                break;
+            }
+        }
+        if(!tabExists)
+            ui->tabDevices->addTab(new QWidget(), group);
     }
     reply->deleteLater();
     devices.shrink_to_fit();
@@ -105,13 +122,12 @@ void Dialog::initMQTTClient() {
     connect(_mclient, &QMqttClient::stateChanged, this, &Dialog::updateLogStateChange);
     connect(_mclient, &QMqttClient::disconnected, this, &Dialog::brokerDisconnected);
     connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
-            const QString content = QDateTime::currentDateTime().toString()
-                        + QLatin1String(" Received Topic: ")
-                        + topic.name()
-                        + QLatin1String(" Message: ")
-                        + message
-                        + QLatin1Char('\n');
-            ui->editLog->insertPlainText(content);
+//            const QString content = QDateTime::currentDateTime().toString()
+//                        + QLatin1String(" Received Topic: ")
+//                        + topic.name()
+//                        + QLatin1String(" Message: ")
+//                        + message
+//                        + QLatin1Char('\n');
             Switch* tSwitch = nullptr;
             tSwitch = find_switch(topic.name());
             if(tSwitch){
@@ -206,4 +222,8 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
         this->_recognizer->stopRecognition();
         QMessageBox::information(this, "Информация", "Сфинкс больше не подслушивает за вами :)");
     }
+}
+
+void Dialog::addButtonClicked() {
+    addDlg->selectDevice(this->devices, ui->tabDevices->tabText(ui->tabDevices->currentIndex()));
 }

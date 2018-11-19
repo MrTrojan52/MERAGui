@@ -10,6 +10,7 @@
 #include "SwitchWidget/include/switch.h"
 #include "Device/include/adevice.h"
 #include "recognizersettingsdialog.h"
+#include "adddevicedialog.h"
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -34,13 +35,12 @@ private slots:
     void replyFinished(QNetworkReply*);
     void connectionDialogAccepted();
     void connectionDialogRejected();
-    void generateControls();
-
+    void addButtonClicked();
     void on_tbRecognizeSettings_clicked();
-
     void on_psbStartRecognize_toggled(bool checked);
 
-private:
+private:    
+    void generateControls();
     void initMQTTClient();
     void getAllFeeds();
     void executeCommand(std::map<QString,QString>&);
@@ -53,8 +53,11 @@ private:
     vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg = nullptr;
     RecognizerSettingsDialog* rsDlg = nullptr;
+    AddDeviceDialog* addDlg = nullptr;
     QThread* _recognizeThread = nullptr;
     QString _sfilename = "settings.ini";
+    QString _sdevicesFilename = "devices.ini";
+    QToolButton* addButton;
 };
 
 #endif // DIALOG_H

@@ -20,3 +20,7 @@ QString ADevice::getGroup() const {
 QString ADevice::getFeed() const {
     return _feed;
 }
+
+void ADevice::setTriggerPhrase(QString new_phrase) {
+    this->_triggerPhrase = new_phrase;
+}
