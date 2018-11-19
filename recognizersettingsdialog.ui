@@ -13,6 +13,17 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QLineEdit {
+	background-color: rgba(239,239,239,0);
+	border: 0px;
+	border-bottom: 2px solid #ABABAB;
+}
+
+QLineEdit:hover {
+	border-bottom: 2px solid #2fbbd2;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -62,6 +73,9 @@
       <widget class="QLineEdit" name="leDictionary">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <property name="placeholderText">
         <string>Путь к файлу со словарем</string>
