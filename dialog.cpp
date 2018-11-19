@@ -174,9 +174,13 @@ void Dialog::generateControls() {
 }
 
 Switch * Dialog::find_switch(QString topic) {
-    return *(std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
+    auto sw = std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
         return s->accessibleDescription() == topic;
-    }));
+    });
+    if(sw != vecSwitch.end())
+        return *sw;
+    else
+        return nullptr;
 }
 
 void Dialog::on_tbRecognizeSettings_clicked()
