@@ -9,7 +9,8 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-
+    this->setSizeGripEnabled(true);
+    this->setWindowFlag(Qt::FramelessWindowHint);
     QLabel *label = new QLabel("Sphinx", this);
     label->setAttribute(Qt::WA_TranslucentBackground);
     label->setForegroundRole(QPalette::Foreground);
@@ -36,6 +37,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(m_settingsBtn, SIGNAL(clicked()), this, SLOT(recognitionSettingsClicked()));
 
     m_appBar = new QtMaterialAppBar(this);
+    m_appBar->setFixedHeight(65);
     m_appBar->appBarLayout()->addWidget(m_recognizeBtn);
     m_appBar->appBarLayout()->addWidget(label, 1);
     m_appBar->appBarLayout()->addWidget(m_settingsBtn);

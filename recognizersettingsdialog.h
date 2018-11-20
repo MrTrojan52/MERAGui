@@ -2,7 +2,7 @@
 #define RECOGNIZERSETTINGSDIALOG_H
 
 #include <QDialog>
-
+#include "qtmaterialappbar.h"
 namespace Ui {
 class RecognizerSettingsDialog;
 }
@@ -25,7 +25,7 @@ private slots:
 
     void on_tbGrammSelect_clicked();
 
-    void on_psbSave_clicked();
+    void saveBtnClicked();
 
     void on_cmbAudioDevice_currentIndexChanged(int index);
 
@@ -35,6 +35,7 @@ private:
     QString _sfilename = "recognize_settings.ini";
     bool _fieldsStateChanged = false;
     Ui::RecognizerSettingsDialog *ui;
+    QtMaterialAppBar* m_appBar = nullptr;
 };
 
 #endif // RECOGNIZERSETTINGSDIALOG_H

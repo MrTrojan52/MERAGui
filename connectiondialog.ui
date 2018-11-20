@@ -49,8 +49,11 @@ QLineEdit:hover {
    <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="HLHost">
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
@@ -64,7 +67,7 @@ QLineEdit:hover {
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="HLPort">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
@@ -98,7 +101,7 @@ QLineEdit:hover {
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="HLUser">
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -128,7 +131,7 @@ QLineEdit:hover {
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="HLPassword">
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">

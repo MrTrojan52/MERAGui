@@ -6,9 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>333</height>
+    <width>460</width>
+    <height>335</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>460</width>
+    <height>335</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>460</width>
+    <height>335</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -22,9 +40,22 @@
 
 QLineEdit:hover {
 	border-bottom: 2px solid #2fbbd2;
+}
+
+QToolButton {
+	border: 1px solid #ABABAB;
+	background-color: #00BCD4;
+	color: white;
+}
+
+QToolButton:hover {
+	background-color: #88CFDF;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -39,8 +70,30 @@ QLineEdit:hover {
      </item>
      <item>
       <widget class="QToolButton" name="tbModelSelect">
+       <property name="font">
+        <font>
+         <family>Ubuntu</family>
+         <pointsize>11</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Выбрать папку</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string>...</string>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
        </property>
       </widget>
      </item>
@@ -60,6 +113,12 @@ QLineEdit:hover {
      </item>
      <item>
       <widget class="QToolButton" name="tbMdefSelect">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Выбрать файл</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -84,6 +143,12 @@ QLineEdit:hover {
      </item>
      <item>
       <widget class="QToolButton" name="tbDictSelect">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Выбрать файл</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -105,6 +170,12 @@ QLineEdit:hover {
      </item>
      <item>
       <widget class="QToolButton" name="tbGrammSelect">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Выбрать файл</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -114,17 +185,16 @@ QLineEdit:hover {
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QComboBox" name="cmbAudioDevice"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="psbSave">
-     <property name="text">
-      <string>Сохранить</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

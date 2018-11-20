@@ -5,12 +5,39 @@
 #include <QSettings>
 #include <QDir>
 #include <QMessageBox>
+#include <qtmaterialraisedbutton.h>
+#include <QLabel>
 RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString settings_file) :
     QDialog(parent),
     ui(new Ui::RecognizerSettingsDialog),
     _sfilename(settings_file)
 {
     ui->setupUi(this);
+
+    this->setWindowFlag(Qt::FramelessWindowHint);
+
+    QLabel *label = new QLabel("Настройки распознавания", this);
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setForegroundRole(QPalette::Foreground);
+    label->setContentsMargins(6, 0, 0, 0);
+
+    QPalette palette = label->palette();
+    palette.setColor(label->foregroundRole(), Qt::white);
+    label->setPalette(palette);
+
+    label->setFont(QFont("Roboto", 18, QFont::Normal));
+
+    m_appBar = new QtMaterialAppBar(this);
+    m_appBar->appBarLayout()->addWidget(label);
+    m_appBar->appBarLayout()->setAlignment(label, Qt::AlignCenter);
+    m_appBar->setFixedHeight(65);
+    ui->verticalLayout_2->insertWidget(0, m_appBar);
+
+    QtMaterialRaisedButton* saveBtn = new QtMaterialRaisedButton("Сохранить", this);
+    saveBtn->setBackgroundColor(QColor(0, 188, 212));
+    saveBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    saveBtn->setRippleStyle(Material::RippleStyle::NoRipple);
+    ui->verticalLayout_2->addWidget(saveBtn);
     /*****          Fill combobox with audio devices          *****/
     QProcess sh;
     sh.start("sh");
@@ -26,6 +53,7 @@ RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString sett
     connect(ui->leMdef, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     connect(ui->leDictionary, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     connect(ui->leGramm, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
+    connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveBtnClicked()));
     fillFieldsFromIniFile();
 }
 
@@ -108,7 +136,7 @@ void RecognizerSettingsDialog::on_tbGrammSelect_clicked()
     ui->leGramm->setText(QFileDialog::getOpenFileName(this, "Выберите файл с грамматикой"));
 }
 
-void RecognizerSettingsDialog::on_psbSave_clicked()
+void RecognizerSettingsDialog::saveBtnClicked()
 {
     if(validateAllFields()) {
         if(_fieldsStateChanged) {

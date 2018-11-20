@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <tuple>
 #include "connectiondata.h"
+#include "qtmaterialappbar.h"
 namespace Ui {
 class ConnectionDialog;
 }
@@ -27,6 +28,7 @@ private slots:
 private:
     Ui::ConnectionDialog *ui;
     QString _sfilename = "connection_info.ini";
+    QtMaterialAppBar* m_appBar = nullptr;
 };
 
 #endif // CONNECTIONDIALOG_H
