@@ -14,7 +14,6 @@ ConnectionDialog::ConnectionDialog(QWidget *parent, QString settings_file) :
     ui->editPort->setText(sett.value("AUTH/PORT").toString());
     ui->editUsername->setText(sett.value("AUTH/USERNAME").toString());
     ui->editPassword->setText(sett.value("AUTH/PASSWORD").toString());
-
 }
 
 ConnectionDialog::~ConnectionDialog()

@@ -2,11 +2,46 @@
 #include "ui_dialog.h"
 #include <QMessageBox>
 #include "Device/include/switchdevice.h"
+#include <lib/qtmaterialtheme.h>
+#include <QLabel>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+
+    QLabel *label = new QLabel("Sphinx", this);
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setForegroundRole(QPalette::Foreground);
+    label->setContentsMargins(6, 0, 0, 0);
+
+    QPalette palette = label->palette();
+    palette.setColor(label->foregroundRole(), Qt::white);
+    label->setPalette(palette);
+
+    label->setFont(QFont("Roboto", 18, QFont::Normal));
+
+    m_recognizeBtn = new QtMaterialIconButton(QtMaterialTheme::icon("av", "mic_off"),this);
+    m_recognizeBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    m_recognizeBtn->setIconSize(QSize(24, 24));
+    m_recognizeBtn->setColor(Qt::white);
+    m_recognizeBtn->setFixedWidth(42);
+    connect(m_recognizeBtn, SIGNAL(clicked()), this, SLOT(startRecognizeClicked()));
+
+    m_settingsBtn = new QtMaterialIconButton(QtMaterialTheme::icon("action", "settings"));
+    m_settingsBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    m_settingsBtn->setIconSize(QSize(24, 24));
+    m_settingsBtn->setColor(Qt::white);
+    m_settingsBtn->setFixedWidth(42);
+    connect(m_settingsBtn, SIGNAL(clicked()), this, SLOT(recognitionSettingsClicked()));
+
+    m_appBar = new QtMaterialAppBar(this);
+    m_appBar->appBarLayout()->addWidget(m_recognizeBtn);
+    m_appBar->appBarLayout()->addWidget(label, 1);
+    m_appBar->appBarLayout()->addWidget(m_settingsBtn);
+    m_appBar->appBarLayout()->setAlignment(m_settingsBtn, Qt::AlignRight);
+    ui->verticalLayout->insertWidget(0, m_appBar);
+
     addButton = new QToolButton(this);
     addButton->setText("+");
     addButton->setToolTip("Добавить устройство в группу");
@@ -18,6 +53,7 @@ Dialog::Dialog(QWidget *parent) :
     addButton->setIconSize(QSize(20,20));
     addButton->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
+
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
     cdlg->setModal(true);
@@ -39,8 +75,8 @@ Dialog::~Dialog()
         _recognizeThread->exit();
         _recognizeThread->deleteLater();
     }
-    for(size_t i = 0; i < vecSwitch.size(); ++i)
-        delete vecSwitch[i];
+//    for(size_t i = 0; i < vecSwitch.size(); ++i)
+//        delete vecSwitch[i];
 }
 
 void Dialog::onRecognize(string command) {
@@ -135,19 +171,19 @@ void Dialog::initMQTTClient() {
 //                        + QLatin1String(" Message: ")
 //                        + message
 //                        + QLatin1Char('\n');
-            Switch* tSwitch = nullptr;
-            tSwitch = find_switch(topic.name());
-            if(tSwitch){
-                tSwitch->blockSignals(true);
-                int checked = Qt::CheckState::Unchecked;
-                if(message == "ON")
-                    checked = Qt::CheckState::Checked;
-                else if(message == "OFF")
-                    checked = Qt::CheckState::Unchecked;
-                if(tSwitch->checkState() != checked)
-                    tSwitch->setChecked(checked);
-                tSwitch->blockSignals(false);
-            }
+//            Switch* tSwitch = nullptr;
+//            tSwitch = find_switch(topic.name());
+//            if(tSwitch){
+//                tSwitch->blockSignals(true);
+//                int checked = Qt::CheckState::Unchecked;
+//                if(message == "ON")
+//                    checked = Qt::CheckState::Checked;
+//                else if(message == "OFF")
+//                    checked = Qt::CheckState::Unchecked;
+//                if(tSwitch->checkState() != checked)
+//                    tSwitch->setChecked(checked);
+//                tSwitch->blockSignals(false);
+//            }
         });
     _mclient->connectToHost();
 }
@@ -160,39 +196,40 @@ void Dialog::getAllFeeds() {
 }
 
 void Dialog::generateControls() {
-    vecSwitch.resize(devices.size());
-    for(size_t i = 0; i < devices.size(); ++i) {
-        vecSwitch[i] = new Switch(devices[i]->getName());
-        vecSwitch[i]->setLayoutDirection(Qt::RightToLeft);
-        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + devices[i]->getFeed());
-        ui->verticalLayout->addWidget(vecSwitch[i]);
-        connect(vecSwitch[i], &Switch::toggled, this, [i, this](bool checked) -> void {
-                    devices[i]->setValue(checked ? "ON" : "OFF");
-                    _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
-                });
-    }
+//    vecSwitch.resize(devices.size());
+//    for(size_t i = 0; i < devices.size(); ++i) {
+//        vecSwitch[i] = new Switch(devices[i]->getName());
+//        vecSwitch[i]->setLayoutDirection(Qt::RightToLeft);
+//        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + devices[i]->getFeed());
+//        ui->verticalLayout->addWidget(vecSwitch[i]);
+//        connect(vecSwitch[i], &Switch::toggled, this, [i, this](bool checked) -> void {
+//                    devices[i]->setValue(checked ? "ON" : "OFF");
+//                    _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
+//                });
+//    }
 }
 
-Switch * Dialog::find_switch(QString topic) {
-    auto sw = std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
-        return s->accessibleDescription() == topic;
-    });
-    if(sw != vecSwitch.end())
-        return *sw;
-    else
-        return nullptr;
-}
+//Switch * Dialog::find_switch(QString topic) {
+//    auto sw = std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
+//        return s->accessibleDescription() == topic;
+//    });
+//    if(sw != vecSwitch.end())
+//        return *sw;
+//    else
+//        return nullptr;
+//}
 
-void Dialog::on_tbRecognizeSettings_clicked()
+void Dialog::recognitionSettingsClicked()
 {
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     rsDlg->show();
 }
 
-void Dialog::on_psbStartRecognize_toggled(bool checked)
+void Dialog::startRecognizeClicked()
 {
-    if(checked) {
-        ui->psbStartRecognize->setText("Остановить распознавание");
+    if(this->m_recognizeBtnChecked) {
+        this->m_recognizeBtnChecked = false;
+        this->m_recognizeBtn->setIcon(QtMaterialTheme::icon("av","mic"));
         QSettings sett(_sfilename, QSettings::IniFormat);
         QString model = sett.value("SPHINX/MODEL").toString();
         QString mdef = sett.value("SPHINX/MDEF").toString();
@@ -201,7 +238,7 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
         QString aDev = sett.value("SPHINX/ADEVICE").toString();
         if(model.isEmpty() || mdef.isEmpty() || dict.isEmpty() || gramm.isEmpty() || aDev.isEmpty())
         {         
-            ui->psbStartRecognize->setChecked(false);
+            this->m_recognizeBtn->setIcon(QtMaterialTheme::icon("av","mic_off"));
             QMessageBox::critical(this, "Ошибка", "Невозможно начать распознавание!\nЗаданы не все параметры распознавания.");
             if(rsDlg) {
                 rsDlg->show();
@@ -229,7 +266,8 @@ void Dialog::on_psbStartRecognize_toggled(bool checked)
         _recognizeThread->start();
         emit this->startRecognition(aDev.toStdString());
     } else {
-        ui->psbStartRecognize->setText("Запустить распознавание");
+        this->m_recognizeBtnChecked = true;
+        this->m_recognizeBtn->setIcon(QtMaterialTheme::icon("av","mic_off"));
         if(this->_recognizer)
             this->_recognizer->stopRecognition();
     }

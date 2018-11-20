@@ -24,10 +24,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/include/pocketsphinx
 INCLUDEPATH += /usr/local/include/sphinxbase
+INCLUDEPATH += $$PWD/MaterialWidgets/include
 
 LIBS +=-lpocketsphinx
 LIBS += -lsphinxbase
 LIBS += -lsphinxad
+LIBS += $$PWD/MaterialWidgets/lib/libcomponents.a
 
 CONFIG += c++11
 

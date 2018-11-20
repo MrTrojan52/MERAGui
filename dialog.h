@@ -7,10 +7,13 @@
 #include <utility>
 #include <vector>
 #include "connectiondialog.h"
-#include "SwitchWidget/include/switch.h"
+//#include "SwitchWidget/include/switch.h"
 #include "Device/include/adevice.h"
 #include "recognizersettingsdialog.h"
 #include "adddevicedialog.h"
+#include <QToolButton>
+#include "qtmaterialappbar.h"
+#include <qtmaterialiconbutton.h>
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -36,21 +39,24 @@ private slots:
     void connectionDialogAccepted();
     void connectionDialogRejected();
     void addButtonClicked();
-    void on_tbRecognizeSettings_clicked();
-    void on_psbStartRecognize_toggled(bool checked);
+    void recognitionSettingsClicked();
+    void startRecognizeClicked();
 
 private:    
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();
     void executeCommand(std::map<QString,QString>&);
-    Switch* find_switch(QString topic);
+    QtMaterialAppBar* m_appBar = nullptr;
+    QtMaterialIconButton* m_recognizeBtn = nullptr;
+    QtMaterialIconButton* m_settingsBtn = nullptr;
+   // Switch* find_switch(QString topic);
     Ui::Dialog *ui;
     ConnectionData _cData;
     SphinxRecognizer * _recognizer = nullptr;
     QMqttClient * _mclient = nullptr;
     vector<ADevice*> devices;
-    vector<Switch*> vecSwitch;
+   // vector<Switch*> vecSwitch;
     ConnectionDialog* cdlg = nullptr;
     RecognizerSettingsDialog* rsDlg = nullptr;
     AddDeviceDialog* addDlg = nullptr;
@@ -58,6 +64,7 @@ private:
     QString _sfilename = "settings.ini";
     QString _sdevicesFilename = "devices.ini";
     QToolButton* addButton;
+    bool m_recognizeBtnChecked = true;
 };
 
 #endif // DIALOG_H
