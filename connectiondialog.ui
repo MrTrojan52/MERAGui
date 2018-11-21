@@ -55,11 +55,27 @@ QLineEdit:hover {
    <item>
     <layout class="QHBoxLayout" name="HLHost">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lblHost">
        <property name="text">
         <string>HostName: </string>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="QLineEdit" name="editHost"/>
@@ -69,7 +85,7 @@ QLineEdit:hover {
    <item>
     <layout class="QHBoxLayout" name="HLPort">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="lblPort">
        <property name="text">
         <string>Port: </string>
        </property>
@@ -85,7 +101,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>37</width>
+         <width>44</width>
          <height>20</height>
         </size>
        </property>
@@ -103,7 +119,7 @@ QLineEdit:hover {
    <item>
     <layout class="QHBoxLayout" name="HLUser">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="lblUsername">
        <property name="text">
         <string>Username: </string>
        </property>
@@ -119,7 +135,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>1</width>
+         <width>3</width>
          <height>20</height>
         </size>
        </property>
@@ -133,7 +149,7 @@ QLineEdit:hover {
    <item>
     <layout class="QHBoxLayout" name="HLPassword">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="lblPassword">
        <property name="text">
         <string>Password: </string>
        </property>
@@ -149,7 +165,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>1</width>
+         <width>6</width>
          <height>20</height>
         </size>
        </property>
@@ -159,23 +175,6 @@ QLineEdit:hover {
       <widget class="QLineEdit" name="editPassword"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pbSave">
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pbConnect">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string>Connect</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

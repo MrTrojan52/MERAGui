@@ -4,11 +4,13 @@
 #include "Device/include/switchdevice.h"
 #include <lib/qtmaterialtheme.h>
 #include <QLabel>
+#include <qtmaterialdialog.h>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    //setAttribute(Qt::WA_DeleteOnClose);
     this->setSizeGripEnabled(true);
     this->setWindowFlag(Qt::FramelessWindowHint);
     QLabel *label = new QLabel("Sphinx", this);
@@ -44,13 +46,48 @@ Dialog::Dialog(QWidget *parent) :
     m_appBar->appBarLayout()->setAlignment(m_settingsBtn, Qt::AlignRight);
     ui->verticalLayout->insertWidget(0, m_appBar);
 
+    QHBoxLayout* toolBtnsHLayout = new QHBoxLayout(this);
+    QToolButton * closeBtn = new QToolButton(this);
+    closeBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    closeBtn->setIcon(QIcon(":/images/assets/cross.png"));
+    closeBtn->resize(16, 16);
+    closeBtn->setIconSize(QSize(16,16));
+    closeBtn->setStyleSheet("QToolButton {\
+                                border: 1px solid #ABABAB;\
+                                background-color: #EE7B42;\
+                            }\
+                            QToolButton:hover {\
+                                background-color: #FFA642;\
+                            }");
+    QToolButton * minimizeBtn = new QToolButton(this);
+    minimizeBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    minimizeBtn->setIcon(QIcon(":/images/assets/underline.png"));
+    minimizeBtn->resize(16, 16);
+    minimizeBtn->setIconSize(QSize(16,16));
+    minimizeBtn->setStyleSheet("QToolButton {\
+                                border: 1px solid #ABABAB;\
+                                background-color: #00BCD4;\
+                            }\
+                            QToolButton:hover {\
+                                background-color: #88CFDF;\
+                            }");
+    toolBtnsHLayout->addWidget(minimizeBtn, 0, Qt::AlignRight);
+    toolBtnsHLayout->addWidget(closeBtn);
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnClicked()));
+    connect(minimizeBtn, SIGNAL(clicked()), this, SLOT(minimizeBtnClicked()));
+    ui->verticalLayout->insertLayout(0, toolBtnsHLayout);
+
     addButton = new QToolButton(this);
     addButton->setText("+");
     addButton->setToolTip("Добавить устройство в группу");
     addButton->setIcon(QIcon(":/images/assets/plus.png"));
-    QFile addBtnStyleFile(":/styles/assets/PlusButton.qss");
-    addBtnStyleFile.open(QFile::ReadOnly);
-    addButton->setStyleSheet(addBtnStyleFile.readAll());
+    addButton->setStyleSheet("QToolButton {\
+                             border: 1px solid #ABABAB;\
+                             background-color: white;\
+                             }\
+                             QToolButton:hover {\
+                                 background-color: #E1E1E1;\
+                             }");
     addButton->resize(20,20);
     addButton->setIconSize(QSize(20,20));
     addButton->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
@@ -155,7 +192,12 @@ void Dialog::connectionDialogAccepted() {
 }
 
 void Dialog::connectionDialogRejected() {
-    cdlg->show();
+    if(QMessageBox::warning(this, "Внимание", "Закрытие данного диалогового окна приведет к прекращению работы программы!\n Вы уверены, что хотите выйти?",QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+        cdlg->show();
+    } else {
+        this->close();
+    }
+
 }
 
 void Dialog::initMQTTClient() {
@@ -277,4 +319,12 @@ void Dialog::startRecognizeClicked()
 
 void Dialog::addButtonClicked() {
     addDlg->selectDevice(this->devices, ui->tabDevices->tabText(ui->tabDevices->currentIndex()));
+}
+
+void Dialog::closeBtnClicked() {
+    this->close();
+}
+
+void Dialog::minimizeBtnClicked() {
+    this->setWindowState(Qt::WindowState::WindowMinimized);
 }

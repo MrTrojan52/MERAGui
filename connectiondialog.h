@@ -21,11 +21,12 @@ public:
     ~ConnectionDialog();
 
 private slots:
-    void on_pbSave_clicked();
+    void saveBtnClicked();
 
-    void on_pbConnect_clicked();
+    void connectBtnClicked();
 
 private:
+    bool validateFields();
     Ui::ConnectionDialog *ui;
     QString _sfilename = "connection_info.ini";
 };

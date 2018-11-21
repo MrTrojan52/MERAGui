@@ -10,6 +10,8 @@ AddDeviceDialog::AddDeviceDialog(QWidget *parent, QString saveFilename) :
 
     this->setHeaderText("Добавление устройства");
     ui->verticalLayout->insertWidget(0, this->getAppbar());
+    ui->verticalLayout->insertWidget(0, this->closeBtn);
+    ui->verticalLayout->setAlignment(this->closeBtn, Qt::AlignRight);
 }
 
 AddDeviceDialog::~AddDeviceDialog()

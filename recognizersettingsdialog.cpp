@@ -16,6 +16,8 @@ RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString sett
     this->setHeaderText("Настройки распознавания");
 
     ui->verticalLayout_2->insertWidget(0, this->getAppbar());
+    ui->verticalLayout_2->insertWidget(0, this->closeBtn);
+    ui->verticalLayout_2->setAlignment(this->closeBtn, Qt::AlignRight);
 
     QtMaterialRaisedButton* saveBtn = new QtMaterialRaisedButton("Сохранить", this);
     saveBtn->setBackgroundColor(QColor(0, 188, 212));

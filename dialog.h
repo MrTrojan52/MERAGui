@@ -41,6 +41,8 @@ private slots:
     void addButtonClicked();
     void recognitionSettingsClicked();
     void startRecognizeClicked();
+    void closeBtnClicked();
+    void minimizeBtnClicked();
 
 private:    
     void generateControls();

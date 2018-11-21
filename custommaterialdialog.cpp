@@ -1,4 +1,5 @@
 #include "custommaterialdialog.h"
+#include <lib/qtmaterialtheme.h>
 CustomMaterialDialog::CustomMaterialDialog(QWidget* parent) :
     QDialog (parent)
 {
@@ -19,6 +20,21 @@ CustomMaterialDialog::CustomMaterialDialog(QWidget* parent) :
     m_appBar->appBarLayout()->addWidget(headerText);
     m_appBar->appBarLayout()->setAlignment(headerText, Qt::AlignCenter);
     m_appBar->setFixedHeight(65);
+
+    closeBtn = new QToolButton;
+    closeBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    closeBtn->setIcon(QIcon(":/images/assets/cross.png"));
+    closeBtn->resize(16, 16);
+    closeBtn->setIconSize(QSize(16,16));
+    closeBtn->setStyleSheet("QToolButton {\
+                                border: 1px solid #ABABAB;\
+                                background-color: #EE7B42;\
+                            }\
+                            QToolButton:hover {\
+                                background-color: #FFA642;\
+                            }");
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnClicked()));
+
 }
 
 
@@ -33,4 +49,8 @@ void CustomMaterialDialog::setAppBar(QtMaterialAppBar* appbar) {
     if(this->headerText)
         delete headerText;
     m_appBar = appbar;
+}
+
+void CustomMaterialDialog::closeBtnClicked() {
+    emit reject();
 }
