@@ -1,7 +1,7 @@
 #ifndef ADDDEVICEDIALOG_H
 #define ADDDEVICEDIALOG_H
 
-#include <QDialog>
+#include "custommaterialdialog.h"
 #include "Device/include/adevice.h"
 #include <QListWidgetItem>
 #include "qtmaterialappbar.h"
@@ -9,7 +9,7 @@ namespace Ui {
 class AddDeviceDialog;
 }
 
-class AddDeviceDialog : public QDialog
+class AddDeviceDialog : public CustomMaterialDialog
 {
     Q_OBJECT
 
@@ -32,7 +32,6 @@ private:
     std::vector<ADevice*> _devices;
     QString _group;
     QString _saveFilename;
-    QtMaterialAppBar* m_appBar = nullptr;
 };
 
 #endif // ADDDEVICEDIALOG_H

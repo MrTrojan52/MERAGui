@@ -1,13 +1,12 @@
 #ifndef RECOGNIZERSETTINGSDIALOG_H
 #define RECOGNIZERSETTINGSDIALOG_H
-
-#include <QDialog>
+#include "custommaterialdialog.h"
 #include "qtmaterialappbar.h"
 namespace Ui {
 class RecognizerSettingsDialog;
 }
 
-class RecognizerSettingsDialog : public QDialog
+class RecognizerSettingsDialog : public CustomMaterialDialog
 {
     Q_OBJECT
 
@@ -35,7 +34,6 @@ private:
     QString _sfilename = "recognize_settings.ini";
     bool _fieldsStateChanged = false;
     Ui::RecognizerSettingsDialog *ui;
-    QtMaterialAppBar* m_appBar = nullptr;
 };
 
 #endif // RECOGNIZERSETTINGSDIALOG_H

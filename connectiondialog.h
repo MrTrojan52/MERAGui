@@ -1,7 +1,7 @@
 #ifndef CONNECTIONDIALOG_H
 #define CONNECTIONDIALOG_H
 
-#include <QDialog>
+#include "custommaterialdialog.h"
 #include <QValidator>
 #include <QMessageBox>
 #include <tuple>
@@ -11,7 +11,7 @@ namespace Ui {
 class ConnectionDialog;
 }
 
-class ConnectionDialog : public QDialog
+class ConnectionDialog : public CustomMaterialDialog
 {
     Q_OBJECT
 
@@ -28,7 +28,6 @@ private slots:
 private:
     Ui::ConnectionDialog *ui;
     QString _sfilename = "connection_info.ini";
-    QtMaterialAppBar* m_appBar = nullptr;
 };
 
 #endif // CONNECTIONDIALOG_H

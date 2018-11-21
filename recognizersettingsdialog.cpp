@@ -8,30 +8,14 @@
 #include <qtmaterialraisedbutton.h>
 #include <QLabel>
 RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString settings_file) :
-    QDialog(parent),
+    CustomMaterialDialog(parent),
     ui(new Ui::RecognizerSettingsDialog),
     _sfilename(settings_file)
 {
     ui->setupUi(this);
+    this->setHeaderText("Настройки распознавания");
 
-    this->setWindowFlag(Qt::FramelessWindowHint);
-
-    QLabel *label = new QLabel("Настройки распознавания", this);
-    label->setAttribute(Qt::WA_TranslucentBackground);
-    label->setForegroundRole(QPalette::Foreground);
-    label->setContentsMargins(6, 0, 0, 0);
-
-    QPalette palette = label->palette();
-    palette.setColor(label->foregroundRole(), Qt::white);
-    label->setPalette(palette);
-
-    label->setFont(QFont("Roboto", 18, QFont::Normal));
-
-    m_appBar = new QtMaterialAppBar(this);
-    m_appBar->appBarLayout()->addWidget(label);
-    m_appBar->appBarLayout()->setAlignment(label, Qt::AlignCenter);
-    m_appBar->setFixedHeight(65);
-    ui->verticalLayout_2->insertWidget(0, m_appBar);
+    ui->verticalLayout_2->insertWidget(0, this->getAppbar());
 
     QtMaterialRaisedButton* saveBtn = new QtMaterialRaisedButton("Сохранить", this);
     saveBtn->setBackgroundColor(QColor(0, 188, 212));

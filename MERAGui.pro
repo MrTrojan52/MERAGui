@@ -42,7 +42,8 @@ SOURCES += \
     Device/src/ADevice.cpp \
     Device/src/switchdevice.cpp \
     recognizersettingsdialog.cpp \
-    adddevicedialog.cpp
+    adddevicedialog.cpp \
+    custommaterialdialog.cpp
 
 HEADERS += \
         dialog.h \
@@ -55,7 +56,8 @@ HEADERS += \
     Device/include/adevice.h \
     Device/include/switchdevice.h \
     recognizersettingsdialog.h \
-    adddevicedialog.h
+    adddevicedialog.h \
+    custommaterialdialog.h
 
 FORMS += \
         dialog.ui \
