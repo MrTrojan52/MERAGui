@@ -26,6 +26,7 @@ class Dialog : public QDialog
 
 public:
     explicit Dialog(QWidget *parent = nullptr);
+    bool eventFilter(QObject* object, QEvent* event);
     ~Dialog();
 signals:
     void startRecognition(string from_device = "plughw:1,0");
@@ -67,6 +68,7 @@ private:
     QString _sdevicesFilename = "devices.ini";
     QToolButton* addButton;
     bool m_recognizeBtnChecked = true;
+    QPoint mpos;
 };
 
 #endif // DIALOG_H

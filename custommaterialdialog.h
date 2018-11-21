@@ -4,11 +4,13 @@
 #include <qtmaterialappbar.h>
 #include <QLabel>
 #include <QToolButton>
+#include <QMouseEvent>
 
 class CustomMaterialDialog : public QDialog
 {
     Q_OBJECT
 public:
+    bool eventFilter(QObject* object, QEvent *event);
     explicit CustomMaterialDialog(QWidget *parent = nullptr);
     ~CustomMaterialDialog() {
         if(closeBtn)
@@ -26,6 +28,7 @@ private slots:
 private:
     QtMaterialAppBar* m_appBar = nullptr;
     QLabel* headerText = nullptr;
+    QPoint mpos;
 protected:
     QToolButton* closeBtn = nullptr;
 };

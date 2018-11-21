@@ -44,6 +44,7 @@ Dialog::Dialog(QWidget *parent) :
     m_appBar->appBarLayout()->addWidget(label, 1);
     m_appBar->appBarLayout()->addWidget(m_settingsBtn);
     m_appBar->appBarLayout()->setAlignment(m_settingsBtn, Qt::AlignRight);
+    m_appBar->installEventFilter(this);
     ui->verticalLayout->insertWidget(0, m_appBar);
 
     QHBoxLayout* toolBtnsHLayout = new QHBoxLayout(this);
@@ -327,4 +328,30 @@ void Dialog::closeBtnClicked() {
 
 void Dialog::minimizeBtnClicked() {
     this->setWindowState(Qt::WindowState::WindowMinimized);
+}
+
+bool Dialog::eventFilter(QObject* object, QEvent* event) {
+    if(object == m_appBar) {
+        if(event->type() == QEvent::MouseButtonPress){
+            QMouseEvent* m_event = static_cast<QMouseEvent*>(event);
+            if(m_event->button() == Qt::LeftButton) {
+                mpos = m_event->pos();
+                return true;
+            }
+        } else if(event->type() == QEvent::MouseButtonRelease) {
+            mpos = QPoint(-1,-1);
+            return true;
+        } else if(event->type() == QEvent::MouseMove) {
+            QMouseEvent* m_event = static_cast<QMouseEvent*>(event);
+            if(mpos.x() >= 0 && m_event->buttons() && Qt::LeftButton) {
+                QPoint diff = m_event->pos() - mpos;
+                QPoint newpos = this->pos() + diff;
+                this->move(newpos);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return false;
 }
