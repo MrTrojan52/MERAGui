@@ -44,6 +44,7 @@ Dialog::Dialog(QWidget *parent) :
     m_appBar->appBarLayout()->addWidget(label, 1);
     m_appBar->appBarLayout()->addWidget(m_settingsBtn);
     m_appBar->appBarLayout()->setAlignment(m_settingsBtn, Qt::AlignRight);
+    m_appBar->setCursor(QCursor(Qt::CursorShape::OpenHandCursor));
     m_appBar->installEventFilter(this);
     ui->verticalLayout->insertWidget(0, m_appBar);
 
@@ -331,14 +332,17 @@ void Dialog::minimizeBtnClicked() {
 }
 
 bool Dialog::eventFilter(QObject* object, QEvent* event) {
-    if(object == m_appBar) {
+    if(object == m_appBar) {        
+        QtMaterialAppBar* bar = static_cast<QtMaterialAppBar*>(object);
         if(event->type() == QEvent::MouseButtonPress){
             QMouseEvent* m_event = static_cast<QMouseEvent*>(event);
             if(m_event->button() == Qt::LeftButton) {
+                bar->setCursor(QCursor(Qt::CursorShape::ClosedHandCursor));
                 mpos = m_event->pos();
                 return true;
             }
         } else if(event->type() == QEvent::MouseButtonRelease) {
+            bar->setCursor(QCursor(Qt::CursorShape::OpenHandCursor));
             mpos = QPoint(-1,-1);
             return true;
         } else if(event->type() == QEvent::MouseMove) {

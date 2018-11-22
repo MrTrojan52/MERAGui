@@ -35,6 +35,9 @@
        <bold>true</bold>
       </font>
      </property>
+     <property name="cursor">
+      <cursorShape>ArrowCursor</cursorShape>
+     </property>
      <property name="styleSheet">
       <string notr="true">QTabWidget::pane {
     border: 1px solid #ABABAB;

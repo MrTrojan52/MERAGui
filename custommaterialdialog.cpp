@@ -20,6 +20,7 @@ CustomMaterialDialog::CustomMaterialDialog(QWidget* parent) :
     m_appBar->appBarLayout()->addWidget(headerText);
     m_appBar->appBarLayout()->setAlignment(headerText, Qt::AlignCenter);
     m_appBar->setFixedHeight(65);
+    m_appBar->setCursor(QCursor(Qt::CursorShape::OpenHandCursor));
     m_appBar->installEventFilter(this);
 
     closeBtn = new QToolButton;
@@ -58,13 +59,16 @@ void CustomMaterialDialog::closeBtnClicked() {
 
 bool CustomMaterialDialog::eventFilter(QObject* object, QEvent* event) {
     if(object == m_appBar) {
+        QtMaterialAppBar* bar = static_cast<QtMaterialAppBar*>(object);
         if(event->type() == QEvent::MouseButtonPress){
             QMouseEvent* m_event = static_cast<QMouseEvent*>(event);
             if(m_event->button() == Qt::LeftButton) {
+                bar->setCursor(QCursor(Qt::CursorShape::ClosedHandCursor));
                 mpos = m_event->pos();
                 return true;
             }
         } else if(event->type() == QEvent::MouseButtonRelease) {
+            bar->setCursor(QCursor(Qt::CursorShape::OpenHandCursor));
             mpos = QPoint(-1,-1);
             return true;
         } else if(event->type() == QEvent::MouseMove) {
