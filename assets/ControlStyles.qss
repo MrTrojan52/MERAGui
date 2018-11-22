@@ -1,0 +1,19 @@
+QComboBox {
+    background-color: white;
+    selection-background-color: #00BCD4;
+    selection-color: white;
+    border: 1px solid #ABABAB;
+    height: 22px;
+}
+
+QComboBox::drop-down {
+    background-color: #00BCD4;
+    width: 23px;
+    height: 22px;
+}
+
+QComboBox::down-arrow {	
+    image: url(:/images/assets/downarrow.png);	
+    width: 23px;
+    height: 22px;
+}
