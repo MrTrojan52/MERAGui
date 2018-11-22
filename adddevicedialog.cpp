@@ -65,7 +65,7 @@ void AddDeviceDialog::on_cmbType_currentIndexChanged(const QString &arg1)
                                                 "влажность"
                                             }));
     } else if(arg1 == "Редактируемое") {
-        ui->chkNeedrecognize->setCheckState(Qt::CheckState::Unchecked);
+        ui->chkNeedrecognize->setChecked(false);
         ui->chkNeedrecognize->setEnabled(false);
     }
 }
