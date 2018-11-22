@@ -32,15 +32,7 @@
    <string>Connection Properties</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLineEdit {
-	background-color: rgba(239,239,239,0);
-	border: 0px;
-	border-bottom: 2px solid #ABABAB;
-}
-
-QLineEdit:hover {
-	border-bottom: 2px solid #2fbbd2;
-}</string>
+   <string notr="true"/>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
