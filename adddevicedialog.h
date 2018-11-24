@@ -5,6 +5,7 @@
 #include "Device/include/adevice.h"
 #include <QListWidgetItem>
 #include "qtmaterialappbar.h"
+#include "Device/include/availabledeviceinfo.h"
 namespace Ui {
 class AddDeviceDialog;
 }
@@ -15,11 +16,10 @@ class AddDeviceDialog : public CustomMaterialDialog
 
 public:
     AddDeviceDialog(QWidget *parent = nullptr, QString saveFilename = "devices.ini");
-    void selectDevice(std::vector<ADevice*>& dev, QString group);
+    void selectDevice(std::vector<AvailableDeviceInfo>& dev);
     ~AddDeviceDialog();
 
 private slots:
-    void on_lstDevices_itemChanged(QListWidgetItem *item);
 
     void on_cmbType_currentIndexChanged(const QString &arg1);
 
@@ -27,10 +27,10 @@ private slots:
 
     void on_chkNeedResponse_toggled(bool checked);
 
+    void on_lstDevices_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
 private:
     Ui::AddDeviceDialog *ui;
-    std::vector<ADevice*> _devices;
-    QString _group;
     QString _saveFilename;
 };
 

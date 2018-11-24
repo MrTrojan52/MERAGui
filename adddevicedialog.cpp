@@ -19,25 +19,16 @@ AddDeviceDialog::~AddDeviceDialog()
     delete ui;
 }
 
-void AddDeviceDialog::selectDevice(std::vector<ADevice*>& dev, QString group) {
+void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev) {
     ui->lstDevices->clear();
-    _devices = dev;
-    _group = group;
     int cnt = 0;
-    for(auto x : _devices)
-        if(x->getGroup() == _group) {
-            ui->lstDevices->addItem(x->getName());
-            ui->lstDevices->item(cnt)->setToolTip(x->getFeed());
-            ++cnt;
-        }
+    for(auto x : dev) {
+        ui->lstDevices->addItem(x.getName());
+        ui->lstDevices->item(cnt)->setToolTip(x.getFeed());
+        ++cnt;
+    }
     this->setModal(true);
     this->show();
-}
-
-void AddDeviceDialog::on_lstDevices_itemChanged(QListWidgetItem *item)
-{
-    ui->leTopic->setText(item->toolTip());
-    ui->cmbType->setEnabled(true);
 }
 
 void AddDeviceDialog::on_cmbType_currentIndexChanged(const QString &arg1)
@@ -82,4 +73,11 @@ void AddDeviceDialog::on_chkNeedrecognize_toggled(bool checked)
 void AddDeviceDialog::on_chkNeedResponse_toggled(bool checked)
 {
     ui->leResponse->setEnabled(checked);
+}
+
+void AddDeviceDialog::on_lstDevices_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    Q_UNUSED(previous)
+    ui->leTopic->setText(current->toolTip());
+    ui->cmbType->setEnabled(true);
 }

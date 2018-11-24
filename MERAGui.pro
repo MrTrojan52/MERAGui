@@ -57,7 +57,8 @@ HEADERS += \
     Device/include/switchdevice.h \
     recognizersettingsdialog.h \
     adddevicedialog.h \
-    custommaterialdialog.h
+    custommaterialdialog.h \
+    Device/include/availabledeviceinfo.h
 
 FORMS += \
         dialog.ui \

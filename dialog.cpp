@@ -170,20 +170,15 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     for(int i = 0; i < jA.size(); ++i) {
         QJsonObject jO = jA.at(i).toObject();
         QString group = jO.value("group").toObject().value("name").toString();
-        devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), group, jO.value("key").toString()));
-        bool tabExists = false;
-        for(int i = 0; i < ui->tabDevices->count(); ++i) {
-            if(ui->tabDevices->tabText(i) == group)
-            {
-                tabExists = true;
-                break;
-            }
-        }
-        if(!tabExists)
-            ui->tabDevices->addTab(new QWidget(), group);
+        //devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), group, jO.value("key").toString()));
+        availableDevicesByGroup[group].emplace_back(jO.value("name").toString(), jO.value("key").toString());
+    }
+
+    for(auto& x : availableDevicesByGroup) {
+        ui->tabDevices->addTab(new QWidget(), x.first);
     }
     reply->deleteLater();
-    devices.shrink_to_fit();
+    //devices.shrink_to_fit();
     generateControls();
 }
 
@@ -211,12 +206,12 @@ void Dialog::initMQTTClient() {
     connect(_mclient, &QMqttClient::stateChanged, this, &Dialog::updateLogStateChange);
     connect(_mclient, &QMqttClient::disconnected, this, &Dialog::brokerDisconnected);
     connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
-//            const QString content = QDateTime::currentDateTime().toString()
-//                        + QLatin1String(" Received Topic: ")
-//                        + topic.name()
-//                        + QLatin1String(" Message: ")
-//                        + message
-//                        + QLatin1Char('\n');
+            const QString content = QDateTime::currentDateTime().toString()
+                        + QLatin1String(" Received Topic: ")
+                        + topic.name()
+                        + QLatin1String(" Message: ")
+                        + message
+                        + QLatin1Char('\n');
 //            Switch* tSwitch = nullptr;
 //            tSwitch = find_switch(topic.name());
 //            if(tSwitch){
@@ -320,7 +315,8 @@ void Dialog::startRecognizeClicked()
 }
 
 void Dialog::addButtonClicked() {
-    addDlg->selectDevice(this->devices, ui->tabDevices->tabText(ui->tabDevices->currentIndex()));
+    QString tabText = ui->tabDevices->tabText(ui->tabDevices->currentIndex());
+    addDlg->selectDevice(this->availableDevicesByGroup[tabText]);
 }
 
 void Dialog::closeBtnClicked() {

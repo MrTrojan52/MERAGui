@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 #include "connectiondialog.h"
-//#include "SwitchWidget/include/switch.h"
+#include "Device/include/availabledeviceinfo.h"
 #include "Device/include/adevice.h"
 #include "recognizersettingsdialog.h"
 #include "adddevicedialog.h"
@@ -53,13 +53,11 @@ private:
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;
-   // Switch* find_switch(QString topic);
     Ui::Dialog *ui;
     ConnectionData _cData;
     SphinxRecognizer * _recognizer = nullptr;
     QMqttClient * _mclient = nullptr;
-    vector<ADevice*> devices;
-   // vector<Switch*> vecSwitch;
+    //vector<ADevice*> devices;
     ConnectionDialog* cdlg = nullptr;
     RecognizerSettingsDialog* rsDlg = nullptr;
     AddDeviceDialog* addDlg = nullptr;
@@ -67,6 +65,7 @@ private:
     QString _sfilename = "settings.ini";
     QString _sdevicesFilename = "devices.ini";
     QToolButton* addButton;
+    std::map<QString, std::vector<AvailableDeviceInfo>> availableDevicesByGroup;
     bool m_recognizeBtnChecked = true;
     QPoint mpos;
 };
