@@ -21,11 +21,11 @@ AddDeviceDialog::~AddDeviceDialog()
 
 void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev) {
     ui->lstDevices->clear();
-    int cnt = 0;
     for(auto x : dev) {
-        ui->lstDevices->addItem(x.getName());
-        ui->lstDevices->item(cnt)->setToolTip(x.getFeed());
-        ++cnt;
+        QListWidgetItem* newItem = new QListWidgetItem(x.getName());
+        newItem->setToolTip(x.getFeed());
+        newItem->setData(Qt::UserRole, x.getFeed());
+        ui->lstDevices->addItem(newItem);
     }
     this->setModal(true);
     this->show();
@@ -78,6 +78,6 @@ void AddDeviceDialog::on_chkNeedResponse_toggled(bool checked)
 void AddDeviceDialog::on_lstDevices_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
     Q_UNUSED(previous)
-    ui->leTopic->setText(current->toolTip());
+    ui->leTopic->setText(current->data(Qt::UserRole).toString());
     ui->cmbType->setEnabled(true);
 }
