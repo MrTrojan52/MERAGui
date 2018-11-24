@@ -102,6 +102,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(cdlg, &ConnectionDialog::accepted, this, &Dialog::connectionDialogAccepted);
     connect(cdlg, &ConnectionDialog::rejected, this, &Dialog::connectionDialogRejected);
     connect(addButton, &QToolButton::clicked, this, &Dialog::addButtonClicked);
+    connect(addDlg, &AddDeviceDialog::deviceListChanged, this, &Dialog::updateDevices);
 }
 
 Dialog::~Dialog()
@@ -116,8 +117,7 @@ Dialog::~Dialog()
         _recognizeThread->exit();
         _recognizeThread->deleteLater();
     }
-//    for(size_t i = 0; i < vecSwitch.size(); ++i)
-//        delete vecSwitch[i];
+
 }
 
 void Dialog::onRecognize(string command) {
@@ -154,13 +154,11 @@ void Dialog::brokerDisconnected() {
 void Dialog::updateLogStateChange() {
     qDebug() << "State changed to " << _mclient->state();
     if(_mclient->state() == QMqttClient::Connected) {
-
-
         auto subscription = _mclient->subscribe(QString(_cData.Username + "/feeds/+"));
         if (!subscription) {
-                QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
-                return;
-            }
+            QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
+            return;
+        }
     }
 }
 
@@ -170,7 +168,6 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     for(int i = 0; i < jA.size(); ++i) {
         QJsonObject jO = jA.at(i).toObject();
         QString group = jO.value("group").toObject().value("name").toString();
-        //devices.push_back(new SwitchDevice(jO.value("name").toString(), jO.value("last_value").toString(), group, jO.value("key").toString()));
         availableDevicesByGroup[group].emplace_back(jO.value("name").toString(), jO.value("key").toString());
     }
 
@@ -178,7 +175,6 @@ void Dialog::replyFinished(QNetworkReply* reply) {
         ui->tabDevices->addTab(new QWidget(), x.first);
     }
     reply->deleteLater();
-    //devices.shrink_to_fit();
     generateControls();
 }
 
@@ -194,6 +190,10 @@ void Dialog::connectionDialogRejected() {
     } else {
         this->close();
     }
+
+}
+
+void Dialog::updateDevices() {
 
 }
 
@@ -237,6 +237,7 @@ void Dialog::getAllFeeds() {
 }
 
 void Dialog::generateControls() {
+
 //    vecSwitch.resize(devices.size());
 //    for(size_t i = 0; i < devices.size(); ++i) {
 //        vecSwitch[i] = new Switch(devices[i]->getName());
@@ -316,7 +317,7 @@ void Dialog::startRecognizeClicked()
 
 void Dialog::addButtonClicked() {
     QString tabText = ui->tabDevices->tabText(ui->tabDevices->currentIndex());
-    addDlg->selectDevice(this->availableDevicesByGroup[tabText]);
+    addDlg->selectDevice(this->availableDevicesByGroup[tabText], tabText);
 }
 
 void Dialog::closeBtnClicked() {

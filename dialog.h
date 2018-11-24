@@ -34,6 +34,7 @@ public slots:
     void onRecognize(string);
 
 private slots:
+    void updateDevices();
     void updateLogStateChange();
     void brokerDisconnected();
     void replyFinished(QNetworkReply*);
@@ -57,13 +58,12 @@ private:
     ConnectionData _cData;
     SphinxRecognizer * _recognizer = nullptr;
     QMqttClient * _mclient = nullptr;
-    //vector<ADevice*> devices;
     ConnectionDialog* cdlg = nullptr;
     RecognizerSettingsDialog* rsDlg = nullptr;
     AddDeviceDialog* addDlg = nullptr;
     QThread* _recognizeThread = nullptr;
     QString _sfilename = "settings.ini";
-    QString _sdevicesFilename = "devices.ini";
+    QString _sdevicesFilename = "devices.json";
     QToolButton* addButton;
     std::map<QString, std::vector<AvailableDeviceInfo>> availableDevicesByGroup;
     bool m_recognizeBtnChecked = true;

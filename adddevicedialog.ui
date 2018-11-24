@@ -38,7 +38,10 @@
      <item>
       <widget class="QLineEdit" name="leTopic">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -181,6 +184,9 @@
       <widget class="QLineEdit" name="leResponse">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
