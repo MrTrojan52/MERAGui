@@ -32,7 +32,7 @@ RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString sett
     sh.waitForFinished();
     QString res(sh.readAllStandardOutput());
     QStringList devices = res.split('\n');
-    ui->cmbAudioDevice->addItems(devices);
+    ui->cmbAudioDevice->addItems(devices.filter(QRegExp("^(?!\s*$).+")));
     if(devices.empty())
         QMessageBox::critical(this, "Ошибка", "Отсутствуют устройства записи");
     connect(ui->leModel, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
