@@ -5,6 +5,7 @@
 #include <lib/qtmaterialtheme.h>
 #include <QLabel>
 #include <qtmaterialdialog.h>
+#include <qtmaterialtoggle.h>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -212,19 +213,6 @@ void Dialog::initMQTTClient() {
                         + QLatin1String(" Message: ")
                         + message
                         + QLatin1Char('\n');
-//            Switch* tSwitch = nullptr;
-//            tSwitch = find_switch(topic.name());
-//            if(tSwitch){
-//                tSwitch->blockSignals(true);
-//                int checked = Qt::CheckState::Unchecked;
-//                if(message == "ON")
-//                    checked = Qt::CheckState::Checked;
-//                else if(message == "OFF")
-//                    checked = Qt::CheckState::Unchecked;
-//                if(tSwitch->checkState() != checked)
-//                    tSwitch->setChecked(checked);
-//                tSwitch->blockSignals(false);
-//            }
         });
     _mclient->connectToHost();
 }
@@ -251,20 +239,23 @@ void Dialog::generateControls() {
 //    }
 }
 
-//Switch * Dialog::find_switch(QString topic) {
-//    auto sw = std::find_if(vecSwitch.begin(),vecSwitch.end(), [&topic](Switch* s)->bool {
-//        return s->accessibleDescription() == topic;
-//    });
-//    if(sw != vecSwitch.end())
-//        return *sw;
-//    else
-//        return nullptr;
-//}
-
 void Dialog::recognitionSettingsClicked()
 {
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     rsDlg->show();
+//    QVBoxLayout* lay = new QVBoxLayout;
+//    lay->setAlignment(Qt::AlignTop);
+//    QtMaterialToggle* toggle = new QtMaterialToggle(ui->tabDevices);
+//    QFrame* hDivider = new QFrame(ui->tabDevices);
+//    hDivider->setFrameShape(QFrame::HLine);
+//    //hDivider->setFrameShadow(QFrame::Shadow::Plain);
+//    hDivider->setStyleSheet("QFrame{border: 1px solid #ABABAB; }");
+//    lay->setAlignment(toggle, Qt::AlignRight);
+//    toggle->setText("TEST TEXT");
+//    //toggle->setFixedSize(QSize(25,25));
+//    lay->addWidget(toggle);
+//    lay->addWidget(hDivider);
+//    ui->tabDevices->currentWidget()->setLayout(lay);
 }
 
 void Dialog::startRecognizeClicked()
