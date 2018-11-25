@@ -14,6 +14,7 @@
 #include <QToolButton>
 #include "qtmaterialappbar.h"
 #include <qtmaterialiconbutton.h>
+#include "Device/include/switchdevice.h"
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -54,6 +55,7 @@ private:
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;
+    vector<ADevice*> _devices;
     Ui::Dialog *ui;
     ConnectionData _cData;
     SphinxRecognizer * _recognizer = nullptr;

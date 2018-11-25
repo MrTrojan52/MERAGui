@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <qtmaterialdialog.h>
 #include <qtmaterialtoggle.h>
+#include "Factories/include/devicefactory.h"
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -195,7 +196,25 @@ void Dialog::connectionDialogRejected() {
 }
 
 void Dialog::updateDevices() {
-
+    QFile jsonFile(_sdevicesFilename);
+    if(jsonFile.open(QFile::ReadOnly)) {
+        DeviceFactory dF;
+        ui->tabDevices->clear();
+        for(size_t i = 0; i < _devices.size(); ++i)
+            delete _devices[i];
+        _devices.clear();
+        QJsonDocument jDoc(QJsonDocument::fromJson(jsonFile.readAll()));
+        QJsonObject jObj = jDoc.object();
+        if(jObj.find("devices") != jObj.end()) {
+            if(jObj["devices"].isArray()) {
+                QJsonArray jDevArray = jObj["devices"].toArray();
+                for(int i = 0; i < jDevArray.size(); ++i) {
+                    QJsonObject obj = jDevArray[i].toObject();
+                    _devices.push_back(dF.create(obj));
+                }
+            }
+        }
+    }
 }
 
 void Dialog::initMQTTClient() {
@@ -203,7 +222,7 @@ void Dialog::initMQTTClient() {
     _mclient->setHostname(_cData.Host);
     _mclient->setPort(_cData.Port.toInt());
     _mclient->setUsername(_cData.Username);
-    _mclient->setPassword(_cData.Password); //"36d27d262cda42cf8e357bb722795f72"
+    _mclient->setPassword(_cData.Password);
     connect(_mclient, &QMqttClient::stateChanged, this, &Dialog::updateLogStateChange);
     connect(_mclient, &QMqttClient::disconnected, this, &Dialog::brokerDisconnected);
     connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
@@ -226,6 +245,7 @@ void Dialog::getAllFeeds() {
 
 void Dialog::generateControls() {
 
+    updateDevices();
 //    vecSwitch.resize(devices.size());
 //    for(size_t i = 0; i < devices.size(); ++i) {
 //        vecSwitch[i] = new Switch(devices[i]->getName());
