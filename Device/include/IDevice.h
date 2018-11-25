@@ -1,8 +1,9 @@
 #ifndef IDEVICE_H
 #define IDEVICE_H
 #include <QString>
+#include <QObject>
+class IDevice:public QObject {
 
-class IDevice {
 public:
     virtual QString getValue() const = 0;
     virtual void setValue(QString val) = 0;

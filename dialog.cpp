@@ -12,7 +12,6 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    //setAttribute(Qt::WA_DeleteOnClose);
     this->setSizeGripEnabled(true);
     this->setWindowFlag(Qt::FramelessWindowHint);
     QLabel *label = new QLabel("Sphinx", this);
@@ -159,12 +158,19 @@ void Dialog::updateLogStateChange() {
         auto subscription = _mclient->subscribe(QString(_cData.Username + "/feeds/+"));
         if (!subscription) {
             QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
+            this->cdlg->show();
             return;
         }
     }
 }
 
 void Dialog::replyFinished(QNetworkReply* reply) {
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        QMessageBox::critical(this,"Ошибка", "Невозможно получить список устройств!\nПроверьте данные для подключения!");
+        cdlg->show();
+        return;
+    }
     QJsonDocument jDocument = QJsonDocument::fromJson(reply->readAll());
     QJsonArray jA = jDocument.array();
     for(int i = 0; i < jA.size(); ++i) {
@@ -176,8 +182,14 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     for(auto& x : availableDevicesByGroup) {
         ui->tabDevices->addTab(new QWidget(), x.first);
     }
+
+    for(int i = 0; i < ui->tabDevices->count(); ++i) {
+        QVBoxLayout* vLay = new QVBoxLayout(ui->tabDevices);
+        vLay->setAlignment(Qt::AlignTop);
+        ui->tabDevices->widget(i)->setLayout(vLay);
+    }
     reply->deleteLater();
-    generateControls();
+    updateDevices();
 }
 
 void Dialog::connectionDialogAccepted() {
@@ -199,7 +211,7 @@ void Dialog::updateDevices() {
     QFile jsonFile(_sdevicesFilename);
     if(jsonFile.open(QFile::ReadOnly)) {
         DeviceFactory dF;
-        ui->tabDevices->clear();
+        //ui->tabDevices->clear();
         for(size_t i = 0; i < _devices.size(); ++i)
             delete _devices[i];
         _devices.clear();
@@ -210,8 +222,32 @@ void Dialog::updateDevices() {
                 QJsonArray jDevArray = jObj["devices"].toArray();
                 for(int i = 0; i < jDevArray.size(); ++i) {
                     QJsonObject obj = jDevArray[i].toObject();
-                    _devices.push_back(dF.create(obj));
+                    if(obj.find("group") != obj.end() && obj.find("topic") != obj.end())
+                    {
+                        if(availableDevicesByGroup.find(obj["group"].toString()) != availableDevicesByGroup.end())
+                        {
+                            vector<AvailableDeviceInfo> Adevices = availableDevicesByGroup[obj["group"].toString()];
+                            bool finded = false;
+                            QString topic = obj["topic"].toString();
+                            for(auto x : Adevices)
+                            {
+                                if(x.getFeed() == topic)
+                                {
+                                    finded = true;
+                                    break;
+                                }
+                            }
+                            if(finded) {
+                                ADevice* dev = dF.create(obj);
+                                dev->setMqttClient(_mclient);
+                                dev->setFeedBaseUrl(_cData.Username + "/feeds/");
+                                dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
+                                _devices.push_back(dev);
+                            }
+                        }
+                    }
                 }
+                generateControls();
             }
         }
     }
@@ -244,38 +280,27 @@ void Dialog::getAllFeeds() {
 }
 
 void Dialog::generateControls() {
+    for(auto x : _devices) {
+        for(int i = 0; i < ui->tabDevices->count(); ++i)
+        {
+            if(ui->tabDevices->tabText(i) == x->getGroup())
+            {
+                x->insertWidgetsIntoLayout(ui->tabDevices->widget(i)->layout());
+                QFrame* hDivider = new QFrame(ui->tabDevices->widget(i));
+                hDivider->setFrameShape(QFrame::HLine);
+                //hDivider->setStyleSheet("border: 0px solid #ABABAB; background-color: #ABABAB;");
+                ui->tabDevices->widget(i)->layout()->addWidget(hDivider);
+            }
+        }
 
-    updateDevices();
-//    vecSwitch.resize(devices.size());
-//    for(size_t i = 0; i < devices.size(); ++i) {
-//        vecSwitch[i] = new Switch(devices[i]->getName());
-//        vecSwitch[i]->setLayoutDirection(Qt::RightToLeft);
-//        vecSwitch[i]->setAccessibleDescription(_cData.Username + "/feeds/" + devices[i]->getFeed());
-//        ui->verticalLayout->addWidget(vecSwitch[i]);
-//        connect(vecSwitch[i], &Switch::toggled, this, [i, this](bool checked) -> void {
-//                    devices[i]->setValue(checked ? "ON" : "OFF");
-//                    _mclient->publish(QString(_cData.Username + "/feeds/" + devices[i]->getFeed()), devices[i]->getValue().toUtf8());
-//                });
-//    }
+    }
+
 }
 
 void Dialog::recognitionSettingsClicked()
 {
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     rsDlg->show();
-//    QVBoxLayout* lay = new QVBoxLayout;
-//    lay->setAlignment(Qt::AlignTop);
-//    QtMaterialToggle* toggle = new QtMaterialToggle(ui->tabDevices);
-//    QFrame* hDivider = new QFrame(ui->tabDevices);
-//    hDivider->setFrameShape(QFrame::HLine);
-//    //hDivider->setFrameShadow(QFrame::Shadow::Plain);
-//    hDivider->setStyleSheet("QFrame{border: 1px solid #ABABAB; }");
-//    lay->setAlignment(toggle, Qt::AlignRight);
-//    toggle->setText("TEST TEXT");
-//    //toggle->setFixedSize(QSize(25,25));
-//    lay->addWidget(toggle);
-//    lay->addWidget(hDivider);
-//    ui->tabDevices->currentWidget()->setLayout(lay);
 }
 
 void Dialog::startRecognizeClicked()

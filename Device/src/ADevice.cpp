@@ -1,5 +1,7 @@
 #include "Device/include/adevice.h"
-
+#include <QNetworkReply>
+#include <QEventLoop>
+#include <QObject>
 QString ADevice::getValue() const {
     return _value;
 }
@@ -68,4 +70,35 @@ QJsonObject ADevice::toJsonObject() {
     jObj["needRecognition"] = _needRecognize;
     jObj["needResponse"] = _needResponse;
     return jObj;
+}
+
+void ADevice::setLastValueFromUrl(QString url) {
+    QEventLoop loop;
+    QNetworkAccessManager manager;
+    QObject::connect(&manager,SIGNAL(finished(QNetworkReply*)),&loop,SLOT(quit()));
+    QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+    loop.exec();
+    qDebug() << url;
+    if(reply->error() == QNetworkReply::NoError) {
+        QString values(reply->readAll());
+        setValue(values.split(',')[0]);
+    }
+
+    delete reply;
+}
+
+void ADevice::setMqttClient(QMqttClient* client) {
+    _mclient = client;
+}
+
+QMqttClient* ADevice::getMqttClient() {
+    return _mclient;
+}
+
+void ADevice::setFeedBaseUrl(QString url) {
+    _feedBaseUrl = url;
+}
+
+QString ADevice::getFeedBaseUrl() {
+    return _feedBaseUrl;
 }
