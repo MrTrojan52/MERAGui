@@ -18,7 +18,7 @@ public:
         delete HBox;
         delete name;
         delete value;
-        delete tts;
+        tts->deleteLater();
     }
     void setValue(QString new_val) override;
     void checkTrigger(QString triggerPhrase) override;

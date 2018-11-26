@@ -19,7 +19,7 @@ public:
         delete label;
         delete toggleWidget;
         delete widget;
-        delete tts;
+        tts->deleteLater();
     }
     void setValue(QString new_value) override;
     void checkTrigger(QString triggerPhrase) override;

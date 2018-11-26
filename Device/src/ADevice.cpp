@@ -73,7 +73,6 @@ QJsonObject ADevice::toJsonObject() {
 }
 
 void ADevice::setLastValueFromUrl(QString url) {
-    QEventLoop loop;
     _manager = new QNetworkAccessManager;
     connect(_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply* reply) {
         if(reply->error() == QNetworkReply::NoError)
@@ -84,15 +83,6 @@ void ADevice::setLastValueFromUrl(QString url) {
         }
     });
     _manager->get(QNetworkRequest(QUrl(url)));
-//    QObject::connect(&manager,SIGNAL(finished(QNetworkReply*)),&loop,SLOT(quit()));
-//    QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
-//    loop.exec();
-//    if(reply->error() == QNetworkReply::NoError) {
-//        QString values(reply->readAll());
-//        setValue(values.split(',')[0]);
-//    }
-
-//    delete reply;
 }
 
 void ADevice::setMqttClient(QMqttClient* client) {
