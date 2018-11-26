@@ -14,11 +14,11 @@ private:
 public:
     EditDevice(QJsonObject obj);
     ~EditDevice() override {
-        delete Hbox;
-        delete lEdit;
-        delete submit;
-        delete widget;
-        delete hDivider;
+        Hbox->deleteLater();
+        lEdit->deleteLater();
+        submit->deleteLater();
+        widget->deleteLater();
+        hDivider->deleteLater();
     }
     void checkTrigger(QString triggerPhrase) override;
     QString getType() override;
