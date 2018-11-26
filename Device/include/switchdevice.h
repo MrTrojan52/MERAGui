@@ -16,11 +16,11 @@ public:
     //SwitchDevice(QString name, QString value, QString group, QString feed):ADevice(name, value, group, feed) {}
     SwitchDevice(QJsonObject obj);
     ~SwitchDevice() override {
-        delete HLay;
-        delete label;
-        delete toggleWidget;
-        delete widget;
-        delete hDivider;
+        HLay->deleteLater();
+        label->deleteLater();
+        toggleWidget->deleteLater();
+        widget->deleteLater();
+        hDivider->deleteLater();
         tts->deleteLater();
     }
     void setValue(QString new_value) override;

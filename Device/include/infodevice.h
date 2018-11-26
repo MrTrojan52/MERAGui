@@ -15,11 +15,11 @@ private:
 public:
     InfoDevice(QJsonObject obj);
     ~InfoDevice() override {
-        delete widget;
-        delete HBox;
-        delete name;
-        delete value;
-        delete hDivider;
+        widget->deleteLater();
+        HBox->deleteLater();
+        name->deleteLater();
+        value->deleteLater();
+        hDivider->deleteLater();
         tts->deleteLater();
     }
     void setValue(QString new_val) override;
