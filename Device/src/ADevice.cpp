@@ -74,17 +74,25 @@ QJsonObject ADevice::toJsonObject() {
 
 void ADevice::setLastValueFromUrl(QString url) {
     QEventLoop loop;
-    QNetworkAccessManager manager;
-    QObject::connect(&manager,SIGNAL(finished(QNetworkReply*)),&loop,SLOT(quit()));
-    QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
-    loop.exec();
-    qDebug() << url;
-    if(reply->error() == QNetworkReply::NoError) {
-        QString values(reply->readAll());
-        setValue(values.split(',')[0]);
-    }
+    _manager = new QNetworkAccessManager;
+    connect(_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply* reply) {
+        if(reply->error() == QNetworkReply::NoError)
+        {
+            QString values(reply->readAll());
+            this->setValue(values.split(',')[0]);
+            delete reply;
+        }
+    });
+    _manager->get(QNetworkRequest(QUrl(url)));
+//    QObject::connect(&manager,SIGNAL(finished(QNetworkReply*)),&loop,SLOT(quit()));
+//    QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+//    loop.exec();
+//    if(reply->error() == QNetworkReply::NoError) {
+//        QString values(reply->readAll());
+//        setValue(values.split(',')[0]);
+//    }
 
-    delete reply;
+//    delete reply;
 }
 
 void ADevice::setMqttClient(QMqttClient* client) {
@@ -101,4 +109,12 @@ void ADevice::setFeedBaseUrl(QString url) {
 
 QString ADevice::getFeedBaseUrl() {
     return _feedBaseUrl;
+}
+
+QString ADevice::resolveVariables(QString phrase) {
+    phrase.replace(" #name ", ' ' + getName() + ' ');
+    phrase.replace(" #value ", ' ' + getValue() + ' ');
+    phrase.replace(" #group ", ' ' + getGroup() + ' ');
+    phrase.replace(" #feed ", ' ' + getFeed() + ' ');
+    return phrase;
 }

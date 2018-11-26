@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += mqtt
+QT       += texttospeech
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MERAGui

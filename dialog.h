@@ -51,7 +51,6 @@ private:
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();
-    void executeCommand(std::map<QString,QString>&);
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;

@@ -122,30 +122,10 @@ Dialog::~Dialog()
 }
 
 void Dialog::onRecognize(string command) {
-    QString text = QString::fromStdString(command);
-    qDebug() << text;
-    vector<QString> vecVar{"name", "action", "obj", "pretext", "where"};
-    std::map<QString,QString> Gram;
-    QStringList splittedText = text.split(' ');
-    for(size_t i = 0; i < splittedText.size(); ++i)
-        Gram[vecVar[i]] = splittedText[i];
-    executeCommand(Gram);
-}
-
-void Dialog::executeCommand(std::map<QString,QString>& gram) {
-    QString path = "";
-    QString state = "null";
-    vector<QString> OffState{"выключи", "отключи", "погаси"};
-    if(std::find(OffState.begin(),OffState.end(), gram.at("action")) != OffState.end())
-        state = "OFF";
-    else if(gram.at("action") == "включи")
-        state = "ON";
-    if(gram.at("where") == "кухне")
-        path = _cData.Username + "/feeds/kitchen.lamp-on-the-kitchen-1";
-    else if(gram.at("where") == "зале")
-        path = _cData.Username + "/feeds/zal.lampa-v-zalie";
-    if(path != "")
-        _mclient->publish(path, state.toUtf8());
+    qDebug() << QString::fromStdString(command);
+    for(auto x : _devices) {
+        x->checkTrigger(QString::fromStdString(command));
+    }
 }
 
 void Dialog::brokerDisconnected() {
@@ -262,12 +242,11 @@ void Dialog::initMQTTClient() {
     connect(_mclient, &QMqttClient::stateChanged, this, &Dialog::updateLogStateChange);
     connect(_mclient, &QMqttClient::disconnected, this, &Dialog::brokerDisconnected);
     connect(_mclient, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
-            const QString content = QDateTime::currentDateTime().toString()
-                        + QLatin1String(" Received Topic: ")
-                        + topic.name()
-                        + QLatin1String(" Message: ")
-                        + message
-                        + QLatin1Char('\n');
+            for(auto x: _devices)
+            {
+                if(x->getFeedBaseUrl() + x->getFeed() == topic.name())
+                    x->setValue(message);
+            }
         });
     _mclient->connectToHost();
 }

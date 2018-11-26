@@ -11,7 +11,10 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
     HLay->setMargin(0);
     widget->setFixedHeight(50);
     widget->setLayout(HLay);
-
+    tts = new QTextToSpeech;
+    tts->setLocale(QLocale("ru_RU"));
+    tts->setVolume(0.5);
+    auto x = tts->availableLocales();
     connect(toggleWidget, &QtMaterialToggle::toggled, this, [=](bool checked){
         QString val = checked ? "ON" : "OFF";
         ADevice::setValue(val);
@@ -26,12 +29,9 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
 void SwitchDevice::setValue(QString new_value) {
     if(new_value != getValue()) {
         ADevice::setValue(new_value);
-        toggleWidget->blockSignals(true);
-        toggleWidget->setChecked(new_value == "ON");
-        toggleWidget->blockSignals(false);
+        bool checked = new_value == "ON";
+        toggleWidget->setChecked(checked);
     }
-
-
 }
 
 QString SwitchDevice::getType() {
@@ -39,6 +39,51 @@ QString SwitchDevice::getType() {
 }
 
 void SwitchDevice::checkTrigger(QString triggerPhrase) {
+    QString actPhrase = getTriggerPhrase();
+    if(needRecognize() && !actPhrase.isEmpty()) {
+        QString onPhrase;
+        QString offPhrase;
+        if(actPhrase.indexOf('/') == -1)
+        {
+            setValue(getValue() == "ON" ? "OFF" : "ON");
+            if(needResponse() && !getResponsePhrase().isEmpty())
+            {
+
+                tts->say(resolveVariables(getResponsePhrase()));
+            }
+        } else {
+            QStringList lst = actPhrase.split('/');
+            onPhrase = lst[0].trimmed();
+            QStringList lstNext = lst[1].trimmed().split(' ');
+            for(int i = 1; i < lstNext.size(); ++i)
+                onPhrase += ' ' + lstNext[i];
+            offPhrase = lst[1];
+            lstNext = lst[0].trimmed().split(' ');
+            for(int i = 0; i < lstNext.size() - 1; ++i)
+                offPhrase = lstNext[i] + offPhrase;
+
+            if(onPhrase == offPhrase)
+                setValue(getValue() == "ON" ? "OFF" : "ON");
+            else if(triggerPhrase == onPhrase) {
+                setValue("ON");
+                if(needResponse() && !getResponsePhrase().isEmpty())
+                {
+
+
+                    tts->say(resolveVariables(getResponsePhrase()));
+                }
+            }
+            else if(triggerPhrase == offPhrase) {
+                setValue("OFF");
+                if(needResponse() && !getResponsePhrase().isEmpty())
+                {
+
+                    tts->say(resolveVariables(getResponsePhrase()));
+                }
+            }
+        }
+
+    }
 
 }
 

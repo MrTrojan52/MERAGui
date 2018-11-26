@@ -31,7 +31,7 @@ QString EditDevice::getType() {
 }
 
 void EditDevice::checkTrigger(QString triggerPhrase) {
-
+    Q_UNUSED(triggerPhrase);
 }
 
 void EditDevice::insertWidgetsIntoLayout(QLayout* layout) {

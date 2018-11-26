@@ -17,6 +17,7 @@ private:
     QString _responsePhrase;
     QMqttClient* _mclient = nullptr;
     QString _feedBaseUrl;
+    QNetworkAccessManager* _manager = nullptr;
 public:
     //ADevice(QString name, QString value, QString group, QString feed):_name(name), _value(value), _group(group), _feed(feed) {}
     ADevice(QJsonObject obj) {
@@ -42,6 +43,7 @@ public:
     virtual QMqttClient* getMqttClient();
     virtual void setFeedBaseUrl(QString url);
     virtual QString getFeedBaseUrl();
+    virtual QString resolveVariables(QString str);
     bool needRecognize();
     bool needResponse();
 };

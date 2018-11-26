@@ -3,12 +3,14 @@
 #include "adevice.h"
 #include <qtmaterialtoggle.h>
 #include <QLabel>
+#include <QtTextToSpeech>
 class SwitchDevice : public ADevice {
 private:
     QtMaterialToggle* toggleWidget;
     QLabel* label;
     QHBoxLayout* HLay = nullptr;
     QWidget* widget = nullptr;
+    QTextToSpeech* tts = nullptr;
 public:
     //SwitchDevice(QString name, QString value, QString group, QString feed):ADevice(name, value, group, feed) {}
     SwitchDevice(QJsonObject obj);
@@ -17,6 +19,7 @@ public:
         delete label;
         delete toggleWidget;
         delete widget;
+        delete tts;
     }
     void setValue(QString new_value) override;
     void checkTrigger(QString triggerPhrase) override;
