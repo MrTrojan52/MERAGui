@@ -12,6 +12,7 @@ private:
     QWidget* widget = nullptr;
     QTextToSpeech* tts = nullptr;
     QFrame* hDivider = nullptr;
+    bool needPublish = false;
 public:
     //SwitchDevice(QString name, QString value, QString group, QString feed):ADevice(name, value, group, feed) {}
     SwitchDevice(QJsonObject obj);
@@ -24,6 +25,7 @@ public:
         tts->deleteLater();
     }
     void setValue(QString new_value) override;
+    void setValueFromBack(QString new_value) override;
     void checkTrigger(QString triggerPhrase) override;
     QString getType() override;
     void insertWidgetsIntoLayout(QLayout* layout) override;

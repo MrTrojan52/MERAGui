@@ -21,11 +21,14 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
     connect(toggleWidget, &QtMaterialToggle::toggled, this, [=](bool checked){
         QString val = checked ? "ON" : "OFF";
         ADevice::setValue(val);
-        if(this->getMqttClient()) {
-            this->getMqttClient()->publish(getFeedBaseUrl() + getFeed(), val.toUtf8());
-        } else {
-            qDebug() << "Не задан Mqtt client";
+        if(this->needPublish) {
+            if(this->getMqttClient()) {
+                this->getMqttClient()->publish(getFeedBaseUrl() + getFeed(), val.toUtf8());
+            } else {
+                qDebug() << "Не задан Mqtt client";
+            }
         }
+        this->needPublish = true;
     });
 }
 
@@ -99,4 +102,10 @@ void SwitchDevice::insertWidgetsIntoLayout(QLayout* layout) {
         layout->addWidget(widget);
         layout->addWidget(hDivider);
     }
+}
+
+void SwitchDevice::setValueFromBack(QString new_value) {
+    needPublish = false;
+    setValue(new_value);
+    needPublish = true;
 }

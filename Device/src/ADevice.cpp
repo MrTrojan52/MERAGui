@@ -78,7 +78,7 @@ void ADevice::setLastValueFromUrl(QString url) {
         if(reply->error() == QNetworkReply::NoError)
         {
             QString values(reply->readAll());
-            this->setValue(values.split(',')[0]);
+            this->setValueFromBack(values.split(',')[0]);
             delete reply;
         }
     });
@@ -107,4 +107,8 @@ QString ADevice::resolveVariables(QString phrase) {
     phrase.replace("#group", getGroup());
     phrase.replace("#feed", getFeed());
     return phrase;
+}
+
+void ADevice::setValueFromBack(QString val) {
+    setValue(val);
 }

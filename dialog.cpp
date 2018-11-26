@@ -256,7 +256,7 @@ void Dialog::initMQTTClient() {
             for(auto x: _devices)
             {
                 if(x->getFeedBaseUrl() + x->getFeed() == topic.name())
-                    x->setValue(message);
+                    x->setValueFromBack(message);
             }
         });
     _mclient->connectToHost();

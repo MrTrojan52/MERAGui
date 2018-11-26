@@ -44,6 +44,7 @@ public:
     virtual void setFeedBaseUrl(QString url);
     virtual QString getFeedBaseUrl();
     virtual QString resolveVariables(QString str);
+    virtual void setValueFromBack(QString value);
     bool needRecognize();
     bool needResponse();
 };
