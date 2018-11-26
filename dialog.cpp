@@ -7,6 +7,7 @@
 #include <qtmaterialdialog.h>
 #include <qtmaterialtoggle.h>
 #include "Factories/include/devicefactory.h"
+#include <QScrollArea>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -160,14 +161,24 @@ void Dialog::replyFinished(QNetworkReply* reply) {
     }
 
     for(auto& x : availableDevicesByGroup) {
-        ui->tabDevices->addTab(new QWidget(), x.first);
-    }
 
-    for(int i = 0; i < ui->tabDevices->count(); ++i) {
+        //QScrollArea* scrollArea = new QScrollArea;
+        QWidget* widget = new QWidget(ui->tabDevices);
         QVBoxLayout* vLay = new QVBoxLayout(ui->tabDevices);
         vLay->setAlignment(Qt::AlignTop);
-        ui->tabDevices->widget(i)->setLayout(vLay);
+        widget->setLayout(vLay);
+//        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//        scrollArea->setWidgetResizable(false);
+//        scrollArea->setWidget(widget);
+        ui->tabDevices->addTab(widget, x.first);
     }
+
+//    for(int i = 0; i < ui->tabDevices->count(); ++i) {
+//        QVBoxLayout* vLay = new QVBoxLayout(ui->tabDevices);
+//        vLay->setAlignment(Qt::AlignTop);
+//        ui->tabDevices->widget(i)->setLayout(vLay);
+//    }
     reply->deleteLater();
     updateDevices();
 }
@@ -191,14 +202,14 @@ void Dialog::updateDevices() {
     QFile jsonFile(_sdevicesFilename);
     if(jsonFile.open(QFile::ReadOnly)) {
         DeviceFactory dF;
-        //ui->tabDevices->clear();
-        for(size_t i = 0; i < _devices.size(); ++i)
-            delete _devices[i];
-        _devices.clear();
         QJsonDocument jDoc(QJsonDocument::fromJson(jsonFile.readAll()));
         QJsonObject jObj = jDoc.object();
         if(jObj.find("devices") != jObj.end()) {
             if(jObj["devices"].isArray()) {
+                m_recognizeBtn->setEnabled(false);
+                for(size_t i = 0; i < _devices.size(); ++i)
+                    delete _devices[i];
+                _devices.clear();
                 QJsonArray jDevArray = jObj["devices"].toArray();
                 for(int i = 0; i < jDevArray.size(); ++i) {
                     QJsonObject obj = jDevArray[i].toObject();
@@ -263,16 +274,16 @@ void Dialog::generateControls() {
         for(int i = 0; i < ui->tabDevices->count(); ++i)
         {
             if(ui->tabDevices->tabText(i) == x->getGroup())
-            {
-                x->insertWidgetsIntoLayout(ui->tabDevices->widget(i)->layout());
-                QFrame* hDivider = new QFrame(ui->tabDevices->widget(i));
-                hDivider->setFrameShape(QFrame::HLine);
-                //hDivider->setStyleSheet("border: 0px solid #ABABAB; background-color: #ABABAB;");
-                ui->tabDevices->widget(i)->layout()->addWidget(hDivider);
+            {                
+                QScrollArea* sc = dynamic_cast<QScrollArea*>(ui->tabDevices->widget(i));
+                if(sc)
+                    x->insertWidgetsIntoLayout(sc->widget()->layout());
+                else
+                    x->insertWidgetsIntoLayout(ui->tabDevices->widget(i)->layout());
             }
         }
-
     }
+    m_recognizeBtn->setEnabled(true);
 
 }
 

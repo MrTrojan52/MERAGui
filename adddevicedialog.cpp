@@ -43,6 +43,8 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
     }
     if(ui->lstDevices->count())
         ui->lstDevices->setCurrentRow(0);
+    if(ui->cmbType->count())
+        ui->cmbType->setCurrentIndex(0);
     this->setModal(true);
     this->show();
 }
@@ -53,7 +55,12 @@ void AddDeviceDialog::on_cmbType_currentIndexChanged(const QString &arg1)
     if(arg1 == "Переключаемое") {
         ui->cmbAction->clear();
         ui->cmbObject->clear();
-        ui->cmbAction->addItem("включи / отключи");
+        ui->cmbAction->addItems(QStringList({
+                                                "включи / отключи",
+                                                "включи / погаси",
+                                                "переключи"
+
+                                            }));
         ui->cmbObject->addItems(QStringList({
                                                 "лампу",
                                                 "лампочку",

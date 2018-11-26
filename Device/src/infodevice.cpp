@@ -1,15 +1,18 @@
 #include "Device/include/infodevice.h"
 #include <QtTextToSpeech>
 InfoDevice::InfoDevice(QJsonObject obj):ADevice(obj) {
-    name = new QLabel(getName() + ":");
+    name = new QLabel(getName());
     value = new QLabel(getValue());
     HBox = new QHBoxLayout;
     HBox->addWidget(name);
     HBox->addWidget(value, 0, Qt::AlignRight);
     HBox->setMargin(0);
     widget = new QWidget;
+    widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(HBox);
+    hDivider = new QFrame;
+    hDivider->setFrameShape(QFrame::HLine);
     tts = new QTextToSpeech;
     tts->setLocale(QLocale("ru_RU"));
     tts->setVolume(0.5);
@@ -31,6 +34,8 @@ void InfoDevice::setValue(QString new_value) {
 }
 
 void InfoDevice::insertWidgetsIntoLayout(QLayout* layout) {
-    if(layout)
+    if(layout) {
         layout->addWidget(widget);
+        layout->addWidget(hDivider);
+    }
 }

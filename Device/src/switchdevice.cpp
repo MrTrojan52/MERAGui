@@ -9,11 +9,14 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
     HLay->addWidget(label);
     HLay->addWidget(toggleWidget,0,Qt::AlignRight);
     HLay->setMargin(0);
+    widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(HLay);
     tts = new QTextToSpeech;
     tts->setLocale(QLocale("ru_RU"));
     tts->setVolume(0.5);
+    hDivider = new QFrame;
+    hDivider->setFrameShape(QFrame::HLine);
     auto x = tts->availableLocales();
     connect(toggleWidget, &QtMaterialToggle::toggled, this, [=](bool checked){
         QString val = checked ? "ON" : "OFF";
@@ -48,8 +51,8 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
             setValue(getValue() == "ON" ? "OFF" : "ON");
             if(needResponse() && !getResponsePhrase().isEmpty())
             {
-
-                tts->say(resolveVariables(getResponsePhrase()));
+                QString phrase = getResponsePhrase().replace("#value", getValue() == "ON" ? "включена" : "выключена");
+                tts->say(resolveVariables(phrase));
             }
         } else {
             QStringList lst = actPhrase.split('/');
@@ -62,23 +65,26 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
             for(int i = 0; i < lstNext.size() - 1; ++i)
                 offPhrase = lstNext[i] + offPhrase;
 
-            if(onPhrase == offPhrase)
+            if(onPhrase == offPhrase) {
                 setValue(getValue() == "ON" ? "OFF" : "ON");
+                QString phrase = getResponsePhrase().replace("#value", getValue() == "ON" ? "включена" : "выключена");
+                tts->say(resolveVariables(phrase));
+            }
             else if(triggerPhrase == onPhrase) {
                 setValue("ON");
                 if(needResponse() && !getResponsePhrase().isEmpty())
                 {
 
-
-                    tts->say(resolveVariables(getResponsePhrase()));
+                    QString phrase = getResponsePhrase().replace("#value","включена");
+                    tts->say(resolveVariables(phrase));
                 }
             }
             else if(triggerPhrase == offPhrase) {
                 setValue("OFF");
                 if(needResponse() && !getResponsePhrase().isEmpty())
                 {
-
-                    tts->say(resolveVariables(getResponsePhrase()));
+                    QString phrase = getResponsePhrase().replace("#value","выключена");
+                    tts->say(resolveVariables(phrase));
                 }
             }
         }
@@ -89,6 +95,8 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
 
 
 void SwitchDevice::insertWidgetsIntoLayout(QLayout* layout) {
-    if(layout)
+    if(layout) {
         layout->addWidget(widget);
+        layout->addWidget(hDivider);
+    }
 }

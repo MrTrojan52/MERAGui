@@ -102,9 +102,9 @@ QString ADevice::getFeedBaseUrl() {
 }
 
 QString ADevice::resolveVariables(QString phrase) {
-    phrase.replace(" #name ", ' ' + getName() + ' ');
-    phrase.replace(" #value ", ' ' + getValue() + ' ');
-    phrase.replace(" #group ", ' ' + getGroup() + ' ');
-    phrase.replace(" #feed ", ' ' + getFeed() + ' ');
+    phrase.replace("#name", getName());
+    phrase.replace("#value", getValue());
+    phrase.replace("#group", getGroup());
+    phrase.replace("#feed", getFeed());
     return phrase;
 }

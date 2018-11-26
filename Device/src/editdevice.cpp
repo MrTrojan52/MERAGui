@@ -13,9 +13,11 @@ EditDevice::EditDevice(QJsonObject obj):ADevice(obj) {
     Hbox->addWidget(lEdit);
     Hbox->addWidget(submit, 0, Qt::AlignRight);
     Hbox->setMargin(0);
+    widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(Hbox);
-
+    hDivider = new QFrame;
+    hDivider->setFrameShape(QFrame::HLine);
     connect(submit, &QtMaterialRaisedButton::clicked, this, [this](){
         ADevice::setValue(lEdit->toPlainText());
         if(this->getMqttClient()) {
@@ -35,6 +37,8 @@ void EditDevice::checkTrigger(QString triggerPhrase) {
 }
 
 void EditDevice::insertWidgetsIntoLayout(QLayout* layout) {
-    if(layout)
+    if(layout) {
         layout->addWidget(widget);
+        layout->addWidget(hDivider);
+    }
 }

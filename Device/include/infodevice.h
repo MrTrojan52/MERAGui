@@ -11,6 +11,7 @@ private:
     QHBoxLayout* HBox = nullptr;
     QWidget* widget = nullptr;
     QTextToSpeech* tts = nullptr;
+    QFrame* hDivider = nullptr;
 public:
     InfoDevice(QJsonObject obj);
     ~InfoDevice() override {
@@ -18,6 +19,7 @@ public:
         delete HBox;
         delete name;
         delete value;
+        delete hDivider;
         tts->deleteLater();
     }
     void setValue(QString new_val) override;

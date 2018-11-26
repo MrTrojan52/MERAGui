@@ -10,6 +10,7 @@ private:
     QTextEdit* lEdit = nullptr;
     QtMaterialRaisedButton* submit = nullptr;
     QWidget* widget = nullptr;
+    QFrame* hDivider = nullptr;
 public:
     EditDevice(QJsonObject obj);
     ~EditDevice() override {
@@ -17,6 +18,7 @@ public:
         delete lEdit;
         delete submit;
         delete widget;
+        delete hDivider;
     }
     void checkTrigger(QString triggerPhrase) override;
     QString getType() override;

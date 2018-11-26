@@ -57,6 +57,9 @@
        <property name="toolTip">
         <string>Тип устройства</string>
        </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
        <property name="frame">
         <bool>true</bool>
        </property>
