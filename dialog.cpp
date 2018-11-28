@@ -228,10 +228,12 @@ void Dialog::updateDevices() {
                             }
                             if(finded) {
                                 ADevice* dev = dF.create(obj);
-                                dev->setMqttClient(_mclient);
-                                dev->setFeedBaseUrl(_cData.Username + "/feeds/");
-                                dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
-                                _devices.push_back(dev);
+                                if(dev){
+                                    dev->setMqttClient(_mclient);
+                                    dev->setFeedBaseUrl(_cData.Username + "/feeds/");
+                                    dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
+                                    _devices.push_back(dev);
+                                }
                             }
                         }
                     }
