@@ -6,6 +6,7 @@
 #include <QLabel>
 #include "Factories/include/devicefactory.h"
 #include <QScrollArea>
+#include <qtmaterialscrollbar.h>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -160,23 +161,18 @@ void Dialog::replyFinished(QNetworkReply* reply) {
 
     for(auto& x : availableDevicesByGroup) {
 
-        //QScrollArea* scrollArea = new QScrollArea;
-        QWidget* widget = new QWidget(ui->tabDevices);
-        QVBoxLayout* vLay = new QVBoxLayout(ui->tabDevices);
+        QScrollArea* scrollArea = new QScrollArea(ui->tabDevices);
+        QWidget* widget = new QWidget(scrollArea);
+        QVBoxLayout* vLay = new QVBoxLayout(widget);
         vLay->setAlignment(Qt::AlignTop);
-        widget->setLayout(vLay);
-//        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-//        scrollArea->setWidgetResizable(false);
-//        scrollArea->setWidget(widget);
-        ui->tabDevices->addTab(widget, x.first);
+        scrollArea->setWidget(widget);
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setVerticalScrollBar(new QtMaterialScrollBar(scrollArea));
+        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->tabDevices->addTab(scrollArea, x.first);
     }
 
-//    for(int i = 0; i < ui->tabDevices->count(); ++i) {
-//        QVBoxLayout* vLay = new QVBoxLayout(ui->tabDevices);
-//        vLay->setAlignment(Qt::AlignTop);
-//        ui->tabDevices->widget(i)->setLayout(vLay);
-//    }
     reply->deleteLater();
     updateDevices();
 }
@@ -235,6 +231,7 @@ void Dialog::updateDevices() {
                                     dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
                                     _devices.push_back(dev);
                                     connect(dev->getDeleteAction(), &QAction::triggered, this, [this, id](bool checked){
+                                        Q_UNUSED(checked)
                                         this->deleteDeviceByIndex(id);
                                     });
                                 }
