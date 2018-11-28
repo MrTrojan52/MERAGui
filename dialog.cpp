@@ -4,8 +4,6 @@
 #include "Device/include/switchdevice.h"
 #include <lib/qtmaterialtheme.h>
 #include <QLabel>
-#include <qtmaterialdialog.h>
-#include <qtmaterialtoggle.h>
 #include "Factories/include/devicefactory.h"
 #include <QScrollArea>
 Dialog::Dialog(QWidget *parent) :

@@ -39,7 +39,6 @@ SOURCES += \
         dialog.cpp \        
         SphinxReconizer/src/SphinxRecognizer.cpp \
     connectiondialog.cpp \
-    SwitchWidget/src/switch.cpp \
     Device/src/ADevice.cpp \
     Device/src/switchdevice.cpp \
     recognizersettingsdialog.cpp \
@@ -54,8 +53,6 @@ HEADERS += \
         SphinxReconizer/include/SphinxRecognizer.h \
     connectiondialog.h \
     connectiondata.h \
-    SwitchWidget/include/switch.h \
-    SwitchWidget/include/style.h \
     Device/include/IDevice.h \
     Device/include/adevice.h \
     Device/include/switchdevice.h \

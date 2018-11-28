@@ -29,11 +29,11 @@ private slots:
     void on_cmbAudioDevice_currentIndexChanged(int index);
 
 private:
+    Ui::RecognizerSettingsDialog *ui;
     void fillFieldsFromIniFile();
     bool validateAllFields();
     QString _sfilename = "recognize_settings.ini";
-    bool _fieldsStateChanged = false;
-    Ui::RecognizerSettingsDialog *ui;
+    bool _fieldsStateChanged = false;    
 };
 
 #endif // RECOGNIZERSETTINGSDIALOG_H

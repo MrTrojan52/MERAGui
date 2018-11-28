@@ -4,7 +4,6 @@
 #include "custommaterialdialog.h"
 #include <QValidator>
 #include <QMessageBox>
-#include <tuple>
 #include "connectiondata.h"
 #include "qtmaterialappbar.h"
 namespace Ui {

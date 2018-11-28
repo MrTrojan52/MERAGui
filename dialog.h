@@ -14,7 +14,6 @@
 #include <QToolButton>
 #include "qtmaterialappbar.h"
 #include <qtmaterialiconbutton.h>
-#include "Device/include/switchdevice.h"
 using std::vector;
 using std::pair;
 namespace Ui {

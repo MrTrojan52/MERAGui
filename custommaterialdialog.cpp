@@ -1,5 +1,4 @@
 #include "custommaterialdialog.h"
-#include <lib/qtmaterialtheme.h>
 CustomMaterialDialog::CustomMaterialDialog(QWidget* parent) :
     QDialog (parent)
 {

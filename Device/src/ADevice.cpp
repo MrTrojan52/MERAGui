@@ -1,6 +1,5 @@
 #include "Device/include/adevice.h"
 #include <QNetworkReply>
-#include <QEventLoop>
 #include <QObject>
 QString ADevice::getValue() const {
     return _value;
