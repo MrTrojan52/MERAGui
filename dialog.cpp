@@ -209,6 +209,7 @@ void Dialog::updateDevices() {
                     delete _devices[i];
                 _devices.clear();
                 QJsonArray jDevArray = jObj["devices"].toArray();
+                int id = 0;
                 for(int i = 0; i < jDevArray.size(); ++i) {
                     QJsonObject obj = jDevArray[i].toObject();
                     if(obj.find("group") != obj.end() && obj.find("topic") != obj.end())
@@ -226,17 +227,22 @@ void Dialog::updateDevices() {
                                     break;
                                 }
                             }
-                            if(finded) {
+                            if(finded) {                                
                                 ADevice* dev = dF.create(obj);
                                 if(dev){
                                     dev->setMqttClient(_mclient);
                                     dev->setFeedBaseUrl(_cData.Username + "/feeds/");
                                     dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
                                     _devices.push_back(dev);
+                                    connect(dev->getDeleteAction(), &QAction::triggered, this, [this, id](bool checked){
+                                        this->deleteDeviceByIndex(id);
+                                    });
                                 }
+
                             }
                         }
                     }
+                    ++id;
                 }
                 generateControls();
             }
@@ -285,6 +291,30 @@ void Dialog::generateControls() {
     }
     m_recognizeBtn->setEnabled(true);
 
+}
+
+void Dialog::deleteDeviceByIndex(int index) {
+    QFile jsonFile(_sdevicesFilename);
+    if(jsonFile.open(QFile::ReadOnly)) {
+        QJsonDocument jDoc(QJsonDocument::fromJson(jsonFile.readAll()));
+        jsonFile.close();
+        QJsonObject jObj = jDoc.object();
+        if(jObj.find("devices") != jObj.end()) {
+            if(jObj["devices"].isArray()) {
+                QJsonArray jDevArray = jObj["devices"].toArray();
+                if(index >= 0 && index < jDevArray.size())
+                {
+                    jDevArray.removeAt(index);
+                    jObj["devices"] = jDevArray;
+                    jDoc.setObject(jObj);
+                    jsonFile.open(QFile::WriteOnly);
+                    jsonFile.write(jDoc.toJson());
+                    jsonFile.close();
+                    updateDevices();
+                }
+            }
+        }
+    }
 }
 
 void Dialog::recognitionSettingsClicked()

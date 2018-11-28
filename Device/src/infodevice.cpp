@@ -1,8 +1,9 @@
 #include "Device/include/infodevice.h"
 #include <QtTextToSpeech>
+#include <QAction>
 InfoDevice::InfoDevice(QJsonObject obj):ADevice(obj) {
     name = new QLabel(getName());
-    value = new QLabel(getValue());
+    value = new QLabel(getValue());    
     HBox = new QHBoxLayout;
     HBox->addWidget(name);
     HBox->addWidget(value, 0, Qt::AlignRight);
@@ -11,6 +12,9 @@ InfoDevice::InfoDevice(QJsonObject obj):ADevice(obj) {
     widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(HBox);
+    this->setDeleteAction(new QAction("Удалить устройство", widget));
+    widget->addAction(this->getDeleteAction());
+    widget->setContextMenuPolicy(Qt::ActionsContextMenu);
     hDivider = new QFrame;
     hDivider->setFrameShape(QFrame::HLine);
     tts = new QTextToSpeech;

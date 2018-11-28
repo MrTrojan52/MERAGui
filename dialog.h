@@ -46,7 +46,8 @@ private slots:
     void closeBtnClicked();
     void minimizeBtnClicked();
 
-private:    
+private:
+    void deleteDeviceByIndex(int index);
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();

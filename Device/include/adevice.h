@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QNetworkAccessManager>
 #include <QtMqtt>
+#include <QAction>
 class ADevice : public IDevice {
 private:
     QString _name;
@@ -18,12 +19,15 @@ private:
     QMqttClient* _mclient = nullptr;
     QString _feedBaseUrl;
     QNetworkAccessManager* _manager = nullptr;
+    QAction* delete_action = nullptr;
 public:
     //ADevice(QString name, QString value, QString group, QString feed):_name(name), _value(value), _group(group), _feed(feed) {}
     ADevice(QJsonObject obj) {
         fromJsonObject(obj);
     }
-
+    ~ADevice() override {
+        delete_action->deleteLater();
+    }
     virtual QString getValue() const override;
     virtual QString getName() const;
     virtual QString getGroup() const;
@@ -45,6 +49,8 @@ public:
     virtual QString getFeedBaseUrl();
     virtual QString resolveVariables(QString str);
     virtual void setValueFromBack(QString value);
+    virtual void setDeleteAction(QAction* action);
+    virtual QAction* getDeleteAction();
     bool needRecognize();
     bool needResponse();
 };

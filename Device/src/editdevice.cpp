@@ -16,6 +16,9 @@ EditDevice::EditDevice(QJsonObject obj):ADevice(obj) {
     widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(Hbox);
+    this->setDeleteAction(new QAction("Удалить устройство", widget));
+    widget->addAction(this->getDeleteAction());
+    widget->setContextMenuPolicy(Qt::ActionsContextMenu);
     hDivider = new QFrame;
     hDivider->setFrameShape(QFrame::HLine);
     connect(submit, &QtMaterialRaisedButton::clicked, this, [this](){

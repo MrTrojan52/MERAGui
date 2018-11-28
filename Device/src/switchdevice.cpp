@@ -12,6 +12,9 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
     widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
     widget->setLayout(HLay);
+    this->setDeleteAction(new QAction("Удалить устройство",widget));
+    widget->addAction(this->getDeleteAction());
+    widget->setContextMenuPolicy(Qt::ActionsContextMenu);
     tts = new QTextToSpeech;
     tts->setLocale(QLocale("ru_RU"));
     tts->setVolume(0.5);

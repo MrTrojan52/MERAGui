@@ -111,3 +111,13 @@ QString ADevice::resolveVariables(QString phrase) {
 void ADevice::setValueFromBack(QString val) {
     setValue(val);
 }
+
+void ADevice::setDeleteAction(QAction* action) {
+   if(delete_action)
+       delete_action->deleteLater();
+   delete_action = action;
+}
+
+QAction* ADevice::getDeleteAction() {
+    return delete_action;
+}
