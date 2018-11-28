@@ -105,6 +105,7 @@ void AddDeviceDialog::on_lstDevices_currentItemChanged(QListWidgetItem *current,
     Q_UNUSED(previous)
     if(current) {
         ui->leTopic->setText(current->data(Qt::UserRole).toString());
+        ui->leName->setText(current->text());
         ui->cmbType->setEnabled(true);
     }
 }
@@ -169,7 +170,7 @@ QJsonObject AddDeviceDialog::generateJsonObjectFromFields() {
     QJsonObject jDevice;
     jDevice["type"] = ui->cmbType->currentText();
     jDevice["group"] = m_group;
-    jDevice["name"] = ui->lstDevices->currentItem()->text();
+    jDevice["name"] = ui->leName->text().isEmpty() ? ui->lstDevices->currentItem()->text() : ui->leName->text();
     jDevice["topic"] = ui->leTopic->text();
     jDevice["needRecognition"] = ui->chkNeedrecognize->isChecked();
     jDevice["triggerPhrase"] = ui->chkNeedrecognize->isChecked() ? triggerPhrase : "";
