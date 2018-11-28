@@ -8,6 +8,7 @@ InfoDevice::InfoDevice(QJsonObject obj):ADevice(obj) {
     HBox->addWidget(name);
     HBox->addWidget(value, 0, Qt::AlignRight);
     HBox->setMargin(0);
+    HBox->setContentsMargins(0,0, 15,0);
     widget = new QWidget;
     widget->setMinimumHeight(50);
     widget->setFixedHeight(50);
