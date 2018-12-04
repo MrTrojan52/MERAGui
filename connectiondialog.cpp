@@ -31,7 +31,11 @@ ConnectionDialog::ConnectionDialog(QWidget *parent, QString settings_file) :
 
     ui->editPort->setValidator(new QIntValidator(1,999999));
     QSettings sett(_sfilename, QSettings::IniFormat);
-    ui->editHost->setText(sett.value("AUTH/HOST").toString());
+    QString host = sett.value("AUTH/HOST").toString();
+    int find = ui->cmbHost->findText(host);
+    if(find != -1) {
+        ui->cmbHost->setCurrentIndex(find);
+    }
     ui->editPort->setText(sett.value("AUTH/PORT").toString());
     ui->editUsername->setText(sett.value("AUTH/USERNAME").toString());
     ui->editPassword->setText(sett.value("AUTH/PASSWORD").toString());
@@ -46,7 +50,7 @@ void ConnectionDialog::saveBtnClicked()
 {
     if(validateFields()) {
         QSettings sett(_sfilename, QSettings::IniFormat);
-        sett.setValue("AUTH/HOST", ui->editHost->text());
+        sett.setValue("AUTH/HOST", ui->cmbHost->currentText());
         sett.setValue("AUTH/PORT", ui->editPort->text());
         sett.setValue("AUTH/USERNAME", ui->editUsername->text());
         sett.setValue("AUTH/PASSWORD", ui->editPassword->text());
@@ -65,9 +69,9 @@ void ConnectionDialog::connectBtnClicked()
 }
 
 ConnectionData ConnectionDialog::getData() {
-    return ConnectionData(ui->editHost->text(), ui->editPort->text(), ui->editUsername->text(), ui->editPassword->text());
+    return ConnectionData(ui->cmbHost->currentText(), ui->editPort->text(), ui->editUsername->text(), ui->editPassword->text());
 }
 
 bool ConnectionDialog::validateFields() {
-    return (!ui->editHost->text().isEmpty() && !ui->editUsername->text().isEmpty() && !ui->editPassword->text().isEmpty() && ui->editPort->hasAcceptableInput());
+    return (!ui->cmbHost->currentText().isEmpty() && !ui->editUsername->text().isEmpty() && !ui->editPassword->text().isEmpty() && ui->editPort->hasAcceptableInput());
 }

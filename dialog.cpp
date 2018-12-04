@@ -7,6 +7,7 @@
 #include "Factories/include/devicefactory.h"
 #include <QScrollArea>
 #include <qtmaterialscrollbar.h>
+
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -112,6 +113,7 @@ Dialog::~Dialog()
     delete _recognizer;
     delete cdlg;
     delete _mclient;
+    delete ConnectionManager;
 
 
     if(_recognizeThread) {
@@ -135,7 +137,7 @@ void Dialog::brokerDisconnected() {
 void Dialog::updateLogStateChange() {
     qDebug() << "State changed to " << _mclient->state();
     if(_mclient->state() == QMqttClient::Connected) {
-        auto subscription = _mclient->subscribe(QString(_cData.Username + "/feeds/+"));
+        auto subscription = _mclient->subscribe(QString(ConnectionManager->getGeneralFeedUrl()));
         if (!subscription) {
             QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not subscribe. Is there a valid connection?"));
             this->cdlg->show();
@@ -145,42 +147,47 @@ void Dialog::updateLogStateChange() {
 }
 
 void Dialog::replyFinished(QNetworkReply* reply) {
-    if(reply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::critical(this,"Ошибка", "Невозможно получить список устройств!\nПроверьте данные для подключения!");
-        cdlg->show();
-        return;
-    }
-    QJsonDocument jDocument = QJsonDocument::fromJson(reply->readAll());
-    QJsonArray jA = jDocument.array();
-    for(int i = 0; i < jA.size(); ++i) {
-        QJsonObject jO = jA.at(i).toObject();
-        QString group = jO.value("group").toObject().value("name").toString();
-        availableDevicesByGroup[group].emplace_back(jO.value("name").toString(), jO.value("key").toString());
-    }
+//    if(reply->error() != QNetworkReply::NoError)
+//    {
+//        QMessageBox::critical(this,"Ошибка", "Невозможно получить список устройств!\nПроверьте данные для подключения!");
+//        cdlg->show();
+//        return;
+//    }
+//    QJsonDocument jDocument = QJsonDocument::fromJson(reply->readAll());
+//    QJsonArray jA = jDocument.array();
+//    for(int i = 0; i < jA.size(); ++i) {
+//        QJsonObject jO = jA.at(i).toObject();
+//        QString group = jO.value("group").toObject().value("name").toString();
+//        availableDevicesByGroup[group].emplace_back(jO.value("name").toString(), jO.value("key").toString());
+//    }
 
-    for(auto& x : availableDevicesByGroup) {
+//    for(auto& x : availableDevicesByGroup) {
 
-        QScrollArea* scrollArea = new QScrollArea(ui->tabDevices);
-        QWidget* widget = new QWidget(scrollArea);
-        QVBoxLayout* vLay = new QVBoxLayout(widget);
-        vLay->setAlignment(Qt::AlignTop);
-        scrollArea->setWidget(widget);
-        scrollArea->setWidgetResizable(true);
-        scrollArea->setVerticalScrollBar(new QtMaterialScrollBar(scrollArea));
-        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        ui->tabDevices->addTab(scrollArea, x.first);
-    }
+//        QScrollArea* scrollArea = new QScrollArea(ui->tabDevices);
+//        QWidget* widget = new QWidget(scrollArea);
+//        QVBoxLayout* vLay = new QVBoxLayout(widget);
+//        vLay->setAlignment(Qt::AlignTop);
+//        scrollArea->setWidget(widget);
+//        scrollArea->setWidgetResizable(true);
+//        scrollArea->setVerticalScrollBar(new QtMaterialScrollBar(scrollArea));
+//        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+//        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//        ui->tabDevices->addTab(scrollArea, x.first);
+//    }
 
-    reply->deleteLater();
-    updateDevices();
+//    reply->deleteLater();
+   // updateDevices();
 }
 
 void Dialog::connectionDialogAccepted() {
     this->_cData = cdlg->getData();
-    getAllFeeds();
-    initMQTTClient();
+    ConnectionManager = resolveConnectionManagerByHostName(_cData.Host);
+    if(ConnectionManager) {
+        initMQTTClient();
+        getAllFeeds();
+    } else {
+        QMessageBox::warning(this, "Внимание", "Неизвестный хост!");
+    }
 }
 
 void Dialog::connectionDialogRejected() {
@@ -190,6 +197,13 @@ void Dialog::connectionDialogRejected() {
         this->close();
     }
 
+}
+
+IConnectionManager* Dialog::resolveConnectionManagerByHostName(QString host) {
+    if(host.toLower() == "io.adafruit.com")
+        return new AdafruitConnectionManager(_cData);
+    else
+        return nullptr;
 }
 
 void Dialog::updateDevices() {
@@ -227,8 +241,8 @@ void Dialog::updateDevices() {
                                 ADevice* dev = dF.create(obj);
                                 if(dev){
                                     dev->setMqttClient(_mclient);
-                                    dev->setFeedBaseUrl(_cData.Username + "/feeds/");
-                                    dev->setLastValueFromUrl("http://" + _cData.Host + "/api/v2/" + _cData.Username + "/feeds/" + dev->getFeed() + "/data/retain/?X-AIO-Key=" + _cData.Password);
+                                    dev->setFeedBaseUrl(ConnectionManager->getBaseFeedUrl());
+                                    dev->setLastValueFromUrl(ConnectionManager->getLastValueUrl(dev));
                                     _devices.push_back(dev);
                                     connect(dev->getDeleteAction(), &QAction::triggered, this, [this, id](bool checked){
                                         Q_UNUSED(checked)
@@ -266,10 +280,24 @@ void Dialog::initMQTTClient() {
 }
 
 void Dialog::getAllFeeds() {
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
-    manager->get(QNetworkRequest(QUrl("http://" + _cData.Host  + "/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
+    availableDevicesByGroup = ConnectionManager->getDevicesList();
+    for(auto& x : availableDevicesByGroup) {
+        QScrollArea* scrollArea = new QScrollArea(ui->tabDevices);
+        QWidget* widget = new QWidget(scrollArea);
+        QVBoxLayout* vLay = new QVBoxLayout(widget);
+        vLay->setAlignment(Qt::AlignTop);
+        scrollArea->setWidget(widget);
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setVerticalScrollBar(new QtMaterialScrollBar(scrollArea));
+        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->tabDevices->addTab(scrollArea, x.first);
+    }
+    updateDevices();
+//    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+//    connect(manager, SIGNAL(finished(QNetworkReply*)),
+//            this, SLOT(replyFinished(QNetworkReply*)));
+//    manager->get(QNetworkRequest(QUrl("http://" + _cData.Host  + "/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
 }
 
 void Dialog::generateControls() {

@@ -46,7 +46,8 @@ SOURCES += \
     custommaterialdialog.cpp \
     Factories/src/DeviceFactory.cpp \
     Device/src/infodevice.cpp \
-    Device/src/editdevice.cpp
+    Device/src/editdevice.cpp \
+    ConnectionManager/src/AdafruitConnectionManager.cpp
 
 HEADERS += \
         dialog.h \
@@ -63,7 +64,9 @@ HEADERS += \
     Factories/include/IFactory.h \
     Factories/include/devicefactory.h \
     Device/include/infodevice.h \
-    Device/include/editdevice.h
+    Device/include/editdevice.h \
+    ConnectionManager/include/AdafruitConnectionManager.h \
+    ConnectionManager/include/IConnectionManager.h
 
 FORMS += \
         dialog.ui \

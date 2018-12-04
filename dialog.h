@@ -14,6 +14,7 @@
 #include <QToolButton>
 #include "qtmaterialappbar.h"
 #include <qtmaterialiconbutton.h>
+#include "ConnectionManager/include/AdafruitConnectionManager.h"
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -47,10 +48,12 @@ private slots:
     void minimizeBtnClicked();
 
 private:
+    IConnectionManager* resolveConnectionManagerByHostName(QString host);
     void deleteDeviceByIndex(int index);
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();
+    IConnectionManager* ConnectionManager = nullptr;
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;

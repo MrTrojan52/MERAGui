@@ -46,11 +46,20 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="HLHost">
-     <item>
+     <item alignment="Qt::AlignLeft">
       <widget class="QLabel" name="lblHost">
        <property name="text">
         <string>HostName: </string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbHost">
+       <item>
+        <property name="text">
+         <string>io.adafruit.com</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -68,9 +77,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="editHost"/>
      </item>
     </layout>
    </item>
