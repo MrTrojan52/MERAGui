@@ -50,7 +50,7 @@ Dialog::Dialog(QWidget *parent) :
     m_appBar->installEventFilter(this);
     ui->verticalLayout->insertWidget(0, m_appBar);
 
-    QHBoxLayout* toolBtnsHLayout = new QHBoxLayout(this);
+    QHBoxLayout* toolBtnsHLayout = new QHBoxLayout(ui->verticalLayout->widget());
     QToolButton * closeBtn = new QToolButton(this);
     closeBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
     closeBtn->setIcon(QIcon(":/images/assets/cross.png"));
