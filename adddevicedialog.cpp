@@ -52,6 +52,7 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
 void AddDeviceDialog::on_cmbType_currentIndexChanged(const QString &arg1)
 {
     ui->chkNeedrecognize->setEnabled(true);
+    ui->chkNeedResponse->setEnabled(true);
     if(arg1 == "Переключаемое") {
         ui->cmbAction->clear();
         ui->cmbObject->clear();
