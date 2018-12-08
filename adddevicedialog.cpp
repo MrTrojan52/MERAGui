@@ -33,6 +33,10 @@ AddDeviceDialog::~AddDeviceDialog()
 }
 
 void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QString group) {
+    ui->chkNeedResponse->setChecked(false);
+    ui->chkNeedrecognize->setChecked(false);
+    ui->leResponse->clear();
+
     m_group = group;
     ui->lstDevices->clear();
     for(auto x : dev) {
