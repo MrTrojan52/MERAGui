@@ -18,9 +18,6 @@ InfoDevice::InfoDevice(QJsonObject obj):ADevice(obj) {
     widget->setContextMenuPolicy(Qt::ActionsContextMenu);
     hDivider = new QFrame;
     hDivider->setFrameShape(QFrame::HLine);
-    tts = new QTextToSpeech;
-    tts->setLocale(QLocale("ru_RU"));
-    tts->setVolume(0.5);
 }
 
 QString InfoDevice::getType() {
@@ -29,7 +26,7 @@ QString InfoDevice::getType() {
 
 void InfoDevice::checkTrigger(QString triggerPhrase) {
     if(getTriggerPhrase() == triggerPhrase && needResponse() && needRecognize()) {
-        tts->say(resolveVariables(getResponsePhrase()));
+        this->say(resolveVariables(getResponsePhrase()));
     }
 }
 

@@ -10,7 +10,6 @@ private:
     QLabel* value = nullptr;
     QHBoxLayout* HBox = nullptr;
     QWidget* widget = nullptr;
-    QTextToSpeech* tts = nullptr;
     QFrame* hDivider = nullptr;
 public:
     InfoDevice(QJsonObject obj);
@@ -20,7 +19,6 @@ public:
         name->deleteLater();
         value->deleteLater();
         hDivider->deleteLater();
-        tts->deleteLater();
     }
     void setValue(QString new_val) override;
     void checkTrigger(QString triggerPhrase) override;

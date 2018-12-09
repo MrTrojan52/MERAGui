@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 #include <QtMqtt>
 #include <QAction>
+#include <QTextToSpeech>
 class ADevice : public IDevice {
 private:
     QString _name;
@@ -18,17 +19,25 @@ private:
     QString _responsePhrase;
     QMqttClient* _mclient = nullptr;
     QString _feedBaseUrl;
+    QTextToSpeech* tts;
     QNetworkAccessManager* _manager = nullptr;
     QAction* delete_action = nullptr;
 public:
     //ADevice(QString name, QString value, QString group, QString feed):_name(name), _value(value), _group(group), _feed(feed) {}
     ADevice(QJsonObject obj) {
+        tts = new QTextToSpeech;
+        tts->setLocale(QLocale("ru_RU"));
+        tts->setVolume(0.5);
         fromJsonObject(obj);
     }
     ~ADevice() override {
+        delete tts;
         delete_action->deleteLater();
     }
     virtual QString getValue() const override;
+    virtual void setTTSEngine(QString engine);
+    virtual void setTTSVoice(QVoice voice);
+    virtual void say(QString sentense);
     virtual QString getName() const;
     virtual QString getGroup() const;
     virtual QString getFeed() const;

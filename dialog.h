@@ -15,6 +15,7 @@
 #include "qtmaterialappbar.h"
 #include <qtmaterialiconbutton.h>
 #include "ConnectionManager/include/AdafruitConnectionManager.h"
+#include <TTS/TTSSettings.h>
 using std::vector;
 using std::pair;
 namespace Ui {
@@ -35,10 +36,10 @@ public slots:
     void onRecognize(string);
 
 private slots:
+    void onTTSSettingsChanged();
     void updateDevices();
     void updateLogStateChange();
     void brokerDisconnected();
-    void replyFinished(QNetworkReply*);
     void connectionDialogAccepted();
     void connectionDialogRejected();
     void addButtonClicked();
@@ -53,7 +54,9 @@ private:
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();
+    TTSSettings getTTSSettings();
     IConnectionManager* ConnectionManager = nullptr;
+    TTSSettings ttsSett;
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;

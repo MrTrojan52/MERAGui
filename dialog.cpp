@@ -97,14 +97,18 @@ Dialog::Dialog(QWidget *parent) :
     addButton->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
 
+    ttsSett = getTTSSettings();
+
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
+    rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     cdlg->setModal(true);
     cdlg->show();
     connect(cdlg, &ConnectionDialog::accepted, this, &Dialog::connectionDialogAccepted);
     connect(cdlg, &ConnectionDialog::rejected, this, &Dialog::connectionDialogRejected);
     connect(addButton, &QToolButton::clicked, this, &Dialog::addButtonClicked);
     connect(addDlg, &AddDeviceDialog::deviceListChanged, this, &Dialog::updateDevices);
+    connect(rsDlg, &RecognizerSettingsDialog::TTSSettingsChanged, this, &Dialog::onTTSSettingsChanged);
 }
 
 Dialog::~Dialog()
@@ -146,39 +150,6 @@ void Dialog::updateLogStateChange() {
     }
 }
 
-void Dialog::replyFinished(QNetworkReply* reply) {
-//    if(reply->error() != QNetworkReply::NoError)
-//    {
-//        QMessageBox::critical(this,"Ошибка", "Невозможно получить список устройств!\nПроверьте данные для подключения!");
-//        cdlg->show();
-//        return;
-//    }
-//    QJsonDocument jDocument = QJsonDocument::fromJson(reply->readAll());
-//    QJsonArray jA = jDocument.array();
-//    for(int i = 0; i < jA.size(); ++i) {
-//        QJsonObject jO = jA.at(i).toObject();
-//        QString group = jO.value("group").toObject().value("name").toString();
-//        availableDevicesByGroup[group].emplace_back(jO.value("name").toString(), jO.value("key").toString());
-//    }
-
-//    for(auto& x : availableDevicesByGroup) {
-
-//        QScrollArea* scrollArea = new QScrollArea(ui->tabDevices);
-//        QWidget* widget = new QWidget(scrollArea);
-//        QVBoxLayout* vLay = new QVBoxLayout(widget);
-//        vLay->setAlignment(Qt::AlignTop);
-//        scrollArea->setWidget(widget);
-//        scrollArea->setWidgetResizable(true);
-//        scrollArea->setVerticalScrollBar(new QtMaterialScrollBar(scrollArea));
-//        scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-//        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//        ui->tabDevices->addTab(scrollArea, x.first);
-//    }
-
-//    reply->deleteLater();
-   // updateDevices();
-}
-
 void Dialog::connectionDialogAccepted() {
     this->_cData = cdlg->getData();
     ConnectionManager = resolveConnectionManagerByHostName(_cData.Host);
@@ -215,6 +186,11 @@ void Dialog::updateDevices() {
         if(jObj.find("devices") != jObj.end()) {
             if(jObj["devices"].isArray()) {
                 m_recognizeBtn->setEnabled(false);
+                if(this->_recognizer) {
+                    this->m_recognizeBtnChecked = true;
+                    this->m_recognizeBtn->setIcon(QtMaterialTheme::icon("av","mic_off"));
+                    this->_recognizer->stopRecognition();
+                }
                 for(size_t i = 0; i < _devices.size(); ++i)
                     delete _devices[i];
                 _devices.clear();
@@ -243,6 +219,8 @@ void Dialog::updateDevices() {
                                     dev->setMqttClient(_mclient);
                                     dev->setFeedBaseUrl(ConnectionManager->getBaseFeedUrl());
                                     dev->setLastValueFromUrl(ConnectionManager->getLastValueUrl(dev));
+                                    dev->setTTSEngine(ttsSett.getEngine());
+                                    dev->setTTSVoice(ttsSett.getVoice());
                                     _devices.push_back(dev);
                                     connect(dev->getDeleteAction(), &QAction::triggered, this, [this, id](bool checked){
                                         Q_UNUSED(checked)
@@ -294,10 +272,7 @@ void Dialog::getAllFeeds() {
         ui->tabDevices->addTab(scrollArea, x.first);
     }
     updateDevices();
-//    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-//    connect(manager, SIGNAL(finished(QNetworkReply*)),
-//            this, SLOT(replyFinished(QNetworkReply*)));
-//    manager->get(QNetworkRequest(QUrl("http://" + _cData.Host  + "/api/v2/" + _cData.Username + "/feeds?X-AIO-Key=" + _cData.Password)));
+
 }
 
 void Dialog::generateControls() {
@@ -344,7 +319,6 @@ void Dialog::deleteDeviceByIndex(int index) {
 
 void Dialog::recognitionSettingsClicked()
 {
-    rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     rsDlg->show();
 }
 
@@ -407,6 +381,22 @@ void Dialog::closeBtnClicked() {
 
 void Dialog::minimizeBtnClicked() {
     this->setWindowState(Qt::WindowState::WindowMinimized);
+}
+
+TTSSettings Dialog::getTTSSettings() {
+    QSettings sett(_sfilename, QSettings::IniFormat);
+    QString engine = sett.value("TTS/ENGINE").toString();
+    QString voice = sett.value("TTS/VOICE").toString();
+    return TTSSettings(engine, voice);
+}
+
+void Dialog::onTTSSettingsChanged() {
+    ttsSett = getTTSSettings();
+    for(auto& x : _devices) {
+        x->setTTSEngine(ttsSett.getEngine());
+        x->setTTSVoice(ttsSett.getVoice());
+    }
+
 }
 
 bool Dialog::eventFilter(QObject* object, QEvent* event) {

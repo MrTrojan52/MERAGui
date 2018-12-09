@@ -66,7 +66,8 @@ HEADERS += \
     Device/include/infodevice.h \
     Device/include/editdevice.h \
     ConnectionManager/include/AdafruitConnectionManager.h \
-    ConnectionManager/include/IConnectionManager.h
+    ConnectionManager/include/IConnectionManager.h \
+    TTS/TTSSettings.h
 
 FORMS += \
         dialog.ui \

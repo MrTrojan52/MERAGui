@@ -10,11 +10,9 @@ private:
     QLabel* label;
     QHBoxLayout* HLay = nullptr;
     QWidget* widget = nullptr;
-    QTextToSpeech* tts = nullptr;
     QFrame* hDivider = nullptr;
     bool needPublish = false;
 public:
-    //SwitchDevice(QString name, QString value, QString group, QString feed):ADevice(name, value, group, feed) {}
     SwitchDevice(QJsonObject obj);
     ~SwitchDevice() override {
         HLay->deleteLater();
@@ -22,7 +20,6 @@ public:
         toggleWidget->deleteLater();
         widget->deleteLater();
         hDivider->deleteLater();
-        tts->deleteLater();
     }
     void setValue(QString new_value) override;
     void setValueFromBack(QString new_value) override;

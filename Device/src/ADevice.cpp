@@ -121,3 +121,19 @@ void ADevice::setDeleteAction(QAction* action) {
 QAction* ADevice::getDeleteAction() {
     return delete_action;
 }
+
+void ADevice::setTTSEngine(QString engine) {
+    if(tts)
+        delete tts;
+    tts = new QTextToSpeech(engine);
+
+}
+
+void ADevice::setTTSVoice(QVoice voice) {
+    if(tts)
+        tts->setVoice(voice);
+}
+
+void ADevice::say(QString sentence) {
+    tts->say(sentence);
+}

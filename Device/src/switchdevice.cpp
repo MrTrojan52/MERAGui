@@ -15,12 +15,10 @@ SwitchDevice::SwitchDevice(QJsonObject obj):ADevice(obj) {
     this->setDeleteAction(new QAction("Удалить устройство",widget));
     widget->addAction(this->getDeleteAction());
     widget->setContextMenuPolicy(Qt::ActionsContextMenu);
-    tts = new QTextToSpeech;
-    tts->setLocale(QLocale("ru_RU"));
-    tts->setVolume(0.5);
+
+
     hDivider = new QFrame;
     hDivider->setFrameShape(QFrame::HLine);
-    auto x = tts->availableLocales();
     connect(toggleWidget, &QtMaterialToggle::toggled, this, [=](bool checked){
         QString val = checked ? "ON" : "OFF";
         ADevice::setValue(val);
@@ -58,7 +56,7 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
             if(needResponse() && !getResponsePhrase().isEmpty())
             {
                 QString phrase = getResponsePhrase().replace("#value", getValue() == "ON" ? "включена" : "выключена");
-                tts->say(resolveVariables(phrase));
+                this->say(resolveVariables(phrase));
             }
         } else {
             QStringList lst = actPhrase.split('/');
@@ -74,7 +72,7 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
             if(onPhrase == offPhrase) {
                 setValue(getValue() == "ON" ? "OFF" : "ON");
                 QString phrase = getResponsePhrase().replace("#value", getValue() == "ON" ? "включена" : "выключена");
-                tts->say(resolveVariables(phrase));
+                this->say(resolveVariables(phrase));
             }
             else if(triggerPhrase == onPhrase) {
                 setValue("ON");
@@ -82,7 +80,7 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
                 {
 
                     QString phrase = getResponsePhrase().replace("#value","включена");
-                    tts->say(resolveVariables(phrase));
+                    this->say(resolveVariables(phrase));
                 }
             }
             else if(triggerPhrase == offPhrase) {
@@ -90,7 +88,7 @@ void SwitchDevice::checkTrigger(QString triggerPhrase) {
                 if(needResponse() && !getResponsePhrase().isEmpty())
                 {
                     QString phrase = getResponsePhrase().replace("#value","выключена");
-                    tts->say(resolveVariables(phrase));
+                    this->say(resolveVariables(phrase));
                 }
             }
         }

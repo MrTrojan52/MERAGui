@@ -2,6 +2,8 @@
 #define RECOGNIZERSETTINGSDIALOG_H
 #include "custommaterialdialog.h"
 #include "qtmaterialappbar.h"
+#include <QTextToSpeech>
+
 namespace Ui {
 class RecognizerSettingsDialog;
 }
@@ -28,8 +30,12 @@ private slots:
 
     void on_cmbAudioDevice_currentIndexChanged(int index);
 
+    void on_cmbEngine_currentIndexChanged(int index);
+signals:
+    void TTSSettingsChanged();
 private:
     Ui::RecognizerSettingsDialog *ui;
+    QTextToSpeech* tts = nullptr;
     void fillFieldsFromIniFile();
     bool validateAllFields();
     QString _sfilename = "recognize_settings.ini";
