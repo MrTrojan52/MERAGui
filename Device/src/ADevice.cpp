@@ -133,6 +133,7 @@ void ADevice::setTTS(QTextToSpeech* tts) {
 }
 
 void ADevice::say(QString sentence) {
-    _tts->say(sentence);
+    if(_tts)
+        _tts->say(sentence);
 }
 
