@@ -1,6 +1,16 @@
 #include "Device/include/adevice.h"
 #include <QNetworkReply>
 #include <QObject>
+#include <iostream>
+
+ADevice::ADevice(QJsonObject obj)  {
+    tts = new QTextToSpeech;
+    tts->setLocale(QLocale("ru_RU"));
+    tts->setVolume(0.5);
+    connect(tts, &QTextToSpeech::stateChanged, this, &ADevice::onStateChanged);
+    fromJsonObject(obj);
+}
+
 QString ADevice::getValue() const {
     return _value;
 }
@@ -123,9 +133,12 @@ QAction* ADevice::getDeleteAction() {
 }
 
 void ADevice::setTTSEngine(QString engine) {
-    if(tts)
+    if(tts) {
+        disconnect(tts, &QTextToSpeech::stateChanged, this, &ADevice::onStateChanged);
         delete tts;
+    }
     tts = new QTextToSpeech(engine);
+    connect(tts, &QTextToSpeech::stateChanged, this, &ADevice::onStateChanged);
 
 }
 
@@ -135,5 +148,12 @@ void ADevice::setTTSVoice(QVoice voice) {
 }
 
 void ADevice::say(QString sentence) {
+    emit FeedbackStarted();
     tts->say(sentence);
+}
+
+void ADevice::onStateChanged(QTextToSpeech::State state) {
+    if(state == QTextToSpeech::Ready) {
+        emit FeedbackEnded();
+    }
 }

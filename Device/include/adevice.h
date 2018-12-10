@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QTextToSpeech>
 class ADevice : public IDevice {
+    Q_OBJECT
 private:
     QString _name;
     QString _value;
@@ -24,12 +25,7 @@ private:
     QAction* delete_action = nullptr;
 public:
     //ADevice(QString name, QString value, QString group, QString feed):_name(name), _value(value), _group(group), _feed(feed) {}
-    ADevice(QJsonObject obj) {
-        tts = new QTextToSpeech;
-        tts->setLocale(QLocale("ru_RU"));
-        tts->setVolume(0.5);
-        fromJsonObject(obj);
-    }
+    ADevice(QJsonObject obj);
     ~ADevice() override {
         delete tts;
         delete_action->deleteLater();
@@ -62,6 +58,12 @@ public:
     virtual QAction* getDeleteAction();
     bool needRecognize();
     bool needResponse();
+
+private slots:
+    void onStateChanged(QTextToSpeech::State state);
+signals:
+    void FeedbackStarted();
+    void FeedbackEnded();
 };
 
 #endif // ADEVICE_H

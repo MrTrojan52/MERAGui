@@ -36,6 +36,8 @@ public slots:
     void onRecognize(string);
 
 private slots:
+    void onFeedbackStarted();
+    void onFeedbackEnded();
     void onTTSSettingsChanged();
     void updateDevices();
     void updateLogStateChange();
@@ -75,6 +77,7 @@ private:
     std::map<QString, std::vector<AvailableDeviceInfo>> availableDevicesByGroup;
     bool m_recognizeBtnChecked = true;
     QPoint mpos;
+    bool m_sphinxStarted = false;
 };
 
 #endif // DIALOG_H

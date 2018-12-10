@@ -226,6 +226,8 @@ void Dialog::updateDevices() {
                                         Q_UNUSED(checked)
                                         this->deleteDeviceByIndex(id);
                                     });
+                                    connect(dev,&ADevice::FeedbackStarted, this, &Dialog::onFeedbackStarted);
+                                    connect(dev,&ADevice::FeedbackEnded, this, &Dialog::onFeedbackEnded);
                                 }
 
                             }
@@ -358,11 +360,13 @@ void Dialog::startRecognizeClicked()
         this->_recognizer = new SphinxRecognizer(model.toStdString(), dict.toStdString(), mdef.toStdString(), gramm.toStdString());
         _recognizeThread = new QThread;
         this->_recognizer->moveToThread(_recognizeThread);
+        this->m_sphinxStarted = true;
         connect(this, SIGNAL(startRecognition(string)), this->_recognizer, SLOT(startRecognition(string)));
         connect(this->_recognizer, SIGNAL(recognized(string)), this, SLOT(onRecognize(string)));
         _recognizeThread->start();
         emit this->startRecognition(aDev.toStdString());
     } else {
+        this->m_sphinxStarted = false;
         this->m_recognizeBtnChecked = true;
         this->m_recognizeBtn->setIcon(QtMaterialTheme::icon("av","mic_off"));
         if(this->_recognizer)
@@ -397,6 +401,18 @@ void Dialog::onTTSSettingsChanged() {
         x->setTTSVoice(ttsSett.getVoice());
     }
 
+}
+
+void Dialog::onFeedbackStarted() {
+    this->m_recognizeBtnChecked = false;
+    startRecognizeClicked();
+}
+
+void Dialog::onFeedbackEnded() {
+    if(!this->m_sphinxStarted) {
+        this->m_recognizeBtnChecked = true;
+        startRecognizeClicked();
+    }
 }
 
 bool Dialog::eventFilter(QObject* object, QEvent* event) {
