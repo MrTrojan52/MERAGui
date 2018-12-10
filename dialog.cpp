@@ -98,7 +98,8 @@ Dialog::Dialog(QWidget *parent) :
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
 
     ttsSett = getTTSSettings();
-
+    tts = new QTextToSpeech(ttsSett.getEngine());
+    tts->setVoice(ttsSett.getVoice());
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
@@ -109,6 +110,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(addButton, &QToolButton::clicked, this, &Dialog::addButtonClicked);
     connect(addDlg, &AddDeviceDialog::deviceListChanged, this, &Dialog::updateDevices);
     connect(rsDlg, &RecognizerSettingsDialog::TTSSettingsChanged, this, &Dialog::onTTSSettingsChanged);
+    connect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
 }
 
 Dialog::~Dialog()
@@ -219,15 +221,12 @@ void Dialog::updateDevices() {
                                     dev->setMqttClient(_mclient);
                                     dev->setFeedBaseUrl(ConnectionManager->getBaseFeedUrl());
                                     dev->setLastValueFromUrl(ConnectionManager->getLastValueUrl(dev));
-                                    dev->setTTSEngine(ttsSett.getEngine());
-                                    dev->setTTSVoice(ttsSett.getVoice());
+                                    dev->setTTS(tts);
                                     _devices.push_back(dev);
                                     connect(dev->getDeleteAction(), &QAction::triggered, this, [this, id](bool checked){
                                         Q_UNUSED(checked)
                                         this->deleteDeviceByIndex(id);
-                                    });
-                                    connect(dev,&ADevice::FeedbackStarted, this, &Dialog::onFeedbackStarted);
-                                    connect(dev,&ADevice::FeedbackEnded, this, &Dialog::onFeedbackEnded);
+                                    });                                   
                                 }
 
                             }
@@ -396,21 +395,27 @@ TTSSettings Dialog::getTTSSettings() {
 
 void Dialog::onTTSSettingsChanged() {
     ttsSett = getTTSSettings();
-    for(auto& x : _devices) {
-        x->setTTSEngine(ttsSett.getEngine());
-        x->setTTSVoice(ttsSett.getVoice());
+    if(tts) {
+        disconnect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
+        delete tts;
+        tts = new QTextToSpeech(ttsSett.getEngine());
+        tts->setVoice(ttsSett.getVoice());
+        connect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
+        for(auto& x : _devices) {
+            x->setTTS(tts);
+        }
     }
 
 }
 
-void Dialog::onFeedbackStarted() {
-    this->m_recognizeBtnChecked = false;
-    startRecognizeClicked();
-}
-
-void Dialog::onFeedbackEnded() {
-    if(!this->m_sphinxStarted) {
-        this->m_recognizeBtnChecked = true;
+void Dialog::ttsStateChanged(QTextToSpeech::State state) {
+    if(state == QTextToSpeech::Ready) {
+        if(!this->m_sphinxStarted) {
+            this->m_recognizeBtnChecked = true;
+            startRecognizeClicked();
+        }
+    } else {
+        this->m_recognizeBtnChecked = false;
         startRecognizeClicked();
     }
 }

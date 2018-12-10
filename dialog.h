@@ -36,8 +36,7 @@ public slots:
     void onRecognize(string);
 
 private slots:
-    void onFeedbackStarted();
-    void onFeedbackEnded();
+    void ttsStateChanged(QTextToSpeech::State state);
     void onTTSSettingsChanged();
     void updateDevices();
     void updateLogStateChange();
@@ -78,6 +77,7 @@ private:
     bool m_recognizeBtnChecked = true;
     QPoint mpos;
     bool m_sphinxStarted = false;
+    QTextToSpeech* tts = nullptr;
 };
 
 #endif // DIALOG_H

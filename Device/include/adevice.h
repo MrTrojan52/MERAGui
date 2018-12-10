@@ -8,7 +8,6 @@
 #include <QAction>
 #include <QTextToSpeech>
 class ADevice : public IDevice {
-    Q_OBJECT
 private:
     QString _name;
     QString _value;
@@ -20,19 +19,16 @@ private:
     QString _responsePhrase;
     QMqttClient* _mclient = nullptr;
     QString _feedBaseUrl;
-    QTextToSpeech* tts;
+    QTextToSpeech* _tts;
     QNetworkAccessManager* _manager = nullptr;
     QAction* delete_action = nullptr;
 public:
-    //ADevice(QString name, QString value, QString group, QString feed):_name(name), _value(value), _group(group), _feed(feed) {}
     ADevice(QJsonObject obj);
     ~ADevice() override {
-        delete tts;
         delete_action->deleteLater();
     }
     virtual QString getValue() const override;
-    virtual void setTTSEngine(QString engine);
-    virtual void setTTSVoice(QVoice voice);
+    virtual void setTTS(QTextToSpeech* tts);
     virtual void say(QString sentense);
     virtual QString getName() const;
     virtual QString getGroup() const;
@@ -59,11 +55,6 @@ public:
     bool needRecognize();
     bool needResponse();
 
-private slots:
-    void onStateChanged(QTextToSpeech::State state);
-signals:
-    void FeedbackStarted();
-    void FeedbackEnded();
 };
 
 #endif // ADEVICE_H
