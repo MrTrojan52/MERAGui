@@ -47,7 +47,8 @@ SOURCES += \
     Factories/src/DeviceFactory.cpp \
     Device/src/infodevice.cpp \
     Device/src/editdevice.cpp \
-    ConnectionManager/src/AdafruitConnectionManager.cpp
+    ConnectionManager/src/AdafruitConnectionManager.cpp \
+    TTS/TTSSettings.cpp
 
 HEADERS += \
         dialog.h \

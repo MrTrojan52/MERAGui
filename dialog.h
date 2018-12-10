@@ -55,9 +55,9 @@ private:
     void generateControls();
     void initMQTTClient();
     void getAllFeeds();
-    TTSSettings getTTSSettings();
+    TTSSettings* getTTSSettings();
     IConnectionManager* ConnectionManager = nullptr;
-    TTSSettings ttsSett;
+    TTSSettings* ttsSett = nullptr;
     QtMaterialAppBar* m_appBar = nullptr;
     QtMaterialIconButton* m_recognizeBtn = nullptr;
     QtMaterialIconButton* m_settingsBtn = nullptr;

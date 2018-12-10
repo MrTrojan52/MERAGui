@@ -8,33 +8,15 @@ private:
     QString m_engine;
     QVoice m_voice;
 public:
-    TTSSettings() = default;
-    TTSSettings(QString eng, QString voice_name) {
-        m_engine = eng;
-        QTextToSpeech tts(m_engine);
-        for(const QVoice& voice : tts.availableVoices()) {
-            if(voice.name() == voice_name) {
-                m_voice = voice;
-                break;
-            }
-        }
-    }
+    TTSSettings(QString eng, QString voice_name);
 
-    void setVoice(QVoice voice) {
-        m_voice = voice;
-    }
+    void setVoice(QVoice voice);
 
-    void setEngine(QString engine) {
-        m_engine = engine;
-    }
+    void setEngine(QString engine);
 
-    QVoice getVoice() {
-        return m_voice;
-    }
+    QVoice getVoice();
 
-    QString getEngine() {
-        return m_engine;
-    }
+    QString getEngine();
 };
 
 #endif

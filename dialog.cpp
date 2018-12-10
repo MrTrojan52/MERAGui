@@ -98,8 +98,8 @@ Dialog::Dialog(QWidget *parent) :
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
 
     ttsSett = getTTSSettings();
-    tts = new QTextToSpeech(ttsSett.getEngine());
-    tts->setVoice(ttsSett.getVoice());
+    tts = new QTextToSpeech(ttsSett->getEngine());
+    tts->setVoice(ttsSett->getVoice());
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
@@ -116,6 +116,7 @@ Dialog::Dialog(QWidget *parent) :
 Dialog::~Dialog()
 {
     delete ui;
+    delete ttsSett;
     delete _recognizer;
     delete cdlg;
     delete _mclient;
@@ -386,20 +387,22 @@ void Dialog::minimizeBtnClicked() {
     this->setWindowState(Qt::WindowState::WindowMinimized);
 }
 
-TTSSettings Dialog::getTTSSettings() {
+TTSSettings* Dialog::getTTSSettings() {
     QSettings sett(_sfilename, QSettings::IniFormat);
     QString engine = sett.value("TTS/ENGINE").toString();
     QString voice = sett.value("TTS/VOICE").toString();
-    return TTSSettings(engine, voice);
+    return new TTSSettings(engine, voice);
 }
 
 void Dialog::onTTSSettingsChanged() {
+    if(ttsSett)
+        delete ttsSett;
     ttsSett = getTTSSettings();
-    if(tts) {
+    if(tts && ttsSett) {
         disconnect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
         delete tts;
-        tts = new QTextToSpeech(ttsSett.getEngine());
-        tts->setVoice(ttsSett.getVoice());
+        tts = new QTextToSpeech(ttsSett->getEngine());
+        tts->setVoice(ttsSett->getVoice());
         connect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
         for(auto& x : _devices) {
             x->setTTS(tts);
