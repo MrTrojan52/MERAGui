@@ -38,7 +38,8 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
     ui->chkNeedResponse->setChecked(false);
     ui->chkNeedrecognize->setChecked(false);
     ui->leResponse->clear();
-
+    if(_grammFile.isEmpty() || !QFile(_grammFile).exists())
+        QMessageBox::information(this, "Информация", "Не задан файл грамматики!\nБудут использованы стандартные шаблоны фраз.");
     JSGFParser jsgf(_grammFile);
     QStringList values = jsgf.getValuesByVariableName("pretext");
     ui->cmbPretext->clear();
