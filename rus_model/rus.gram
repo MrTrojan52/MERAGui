@@ -1,11 +1,10 @@
 #JSGF V1.0;
 grammar SH;
-public <cmd> = (<name>) (<SwitchOnAction> | <SwitchOffAction> | <InfoAction>) (<SwitchObj> | <InfoObj>) (<pretext>) (<where>);
+public <cmd> = (<name>) (<SwitchOnAction> | <SwitchOffAction> | <InfoAction>) (<SwitchObj> | <InfoObj>) (<where>);
 <name> = Сфинкс;
 <SwitchOnAction> = включи;
 <SwitchOffAction> = погаси | отключи;
-<SwitchObj> = лампу | лампочку | розетку | свет;
+<SwitchObj> = лампу | лампочку | розетку | свет | удлиннитель;
 <InfoObj> = температура | влажность;
 <InfoAction> = скажи | какая;
-<pretext> = в | на;
-<where> = зале | кухне | туалете;
+<where> = в зале | на кухне | в туалете | в комнате;

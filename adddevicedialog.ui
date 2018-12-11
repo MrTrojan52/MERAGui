@@ -138,23 +138,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cmbPretext">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <item>
-        <property name="text">
-         <string>в</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>на</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
       <widget class="QComboBox" name="cmbWhere">
        <property name="enabled">
         <bool>false</bool>

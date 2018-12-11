@@ -41,19 +41,9 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
     if(_grammFile.isEmpty() || !QFile(_grammFile).exists())
         QMessageBox::information(this, "Информация", "Не задан файл грамматики!\nБудут использованы стандартные шаблоны фраз.");
     JSGFParser jsgf(_grammFile);
-    QStringList values = jsgf.getValuesByVariableName("pretext");
-    ui->cmbPretext->clear();
+    QStringList values = jsgf.getValuesByVariableName("where");
     ui->cmbWhere->clear();
-    if(values.isEmpty()) {
-        ui->cmbPretext->addItems({
-                                    "в",
-                                    "на"
-                                 });
-    } else {
-        ui->cmbPretext->addItems(values);
-    }
 
-    values = jsgf.getValuesByVariableName("where");
     if(values.isEmpty()) {
         ui->cmbWhere->addItems({
                                    "зале",
@@ -158,7 +148,6 @@ void AddDeviceDialog::on_chkNeedrecognize_toggled(bool checked)
     if(checked) ui->cmbType->currentTextChanged(ui->cmbType->currentText());
     ui->cmbAction->setEnabled(checked);
     ui->cmbObject->setEnabled(checked);
-    ui->cmbPretext->setEnabled(checked);
     ui->cmbWhere->setEnabled(checked);
 }
 
@@ -236,8 +225,7 @@ void AddDeviceDialog::setGrammFile(QString grammFile) {
 }
 
 QJsonObject AddDeviceDialog::generateJsonObjectFromFields() {
-    QString triggerPhrase = ui->cmbName->currentText() + ' ' + ui->cmbAction->currentText() + ' ' + ui->cmbObject->currentText() + ' ' +
-                            ui->cmbPretext->currentText() + ' ' + ui->cmbWhere->currentText();
+    QString triggerPhrase = ui->cmbName->currentText() + ' ' + ui->cmbAction->currentText() + ' ' + ui->cmbObject->currentText() + ' ' + ui->cmbWhere->currentText();
     QJsonObject jDevice;
     jDevice["type"] = ui->cmbType->currentText();
     jDevice["group"] = m_group;
