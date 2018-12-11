@@ -98,7 +98,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->tabDevices->setCornerWidget(addButton, Qt::Corner::BottomRightCorner);
 
     ttsSett = getTTSSettings();
-    tts = new QTextToSpeech(ttsSett->getEngine());
+    tts = new QTextToSpeech(ttsSett->getEngine(), this);
     tts->setVoice(ttsSett->getVoice());
     addDlg = new AddDeviceDialog(this, _sdevicesFilename);
     cdlg = new ConnectionDialog(this, _sfilename);
@@ -117,11 +117,11 @@ Dialog::~Dialog()
 {
     delete ui;
     delete ttsSett;
-    delete _recognizer;
-    delete cdlg;
+    _recognizer->deleteLater();
     delete _mclient;
     delete ConnectionManager;
-
+    for(size_t i = 0; i < _devices.size(); ++i)
+        delete _devices[i];
 
     if(_recognizeThread) {
         _recognizeThread->exit();
@@ -242,7 +242,7 @@ void Dialog::updateDevices() {
 }
 
 void Dialog::initMQTTClient() {
-    _mclient = new QMqttClient();
+    _mclient = new QMqttClient(this);
     _mclient->setHostname(_cData.Host);
     _mclient->setPort(_cData.Port.toInt());
     _mclient->setUsername(_cData.Username);
@@ -401,7 +401,7 @@ void Dialog::onTTSSettingsChanged() {
     if(tts && ttsSett) {
         disconnect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
         delete tts;
-        tts = new QTextToSpeech(ttsSett->getEngine());
+        tts = new QTextToSpeech(ttsSett->getEngine(), this);
         tts->setVoice(ttsSett->getVoice());
         connect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
         for(auto& x : _devices) {
