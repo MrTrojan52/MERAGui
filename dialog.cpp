@@ -117,7 +117,7 @@ Dialog::~Dialog()
 {
     delete ui;
     delete ttsSett;
-    _recognizer->deleteLater();
+    delete _recognizer;
     delete _mclient;
     delete ConnectionManager;
     for(size_t i = 0; i < _devices.size(); ++i)
