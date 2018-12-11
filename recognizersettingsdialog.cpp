@@ -157,7 +157,7 @@ void RecognizerSettingsDialog::saveBtnClicked()
             TTSSettingsChanged();
         }
 
-        accept();
+        emit accept();
     }
 }
 

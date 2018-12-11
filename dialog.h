@@ -48,6 +48,7 @@ private slots:
     void startRecognizeClicked();
     void closeBtnClicked();
     void minimizeBtnClicked();
+    void recognitionSettingsDlgAccepted();
 
 private:
     IConnectionManager* resolveConnectionManagerByHostName(QString host);

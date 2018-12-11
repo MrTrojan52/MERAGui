@@ -15,9 +15,10 @@ class AddDeviceDialog : public CustomMaterialDialog
     Q_OBJECT
 
 public:
-    AddDeviceDialog(QWidget *parent = nullptr, QString saveFilename = "devices.json");
+    AddDeviceDialog(QWidget *parent = nullptr, QString saveFilename = "devices.json", QString grammFile = "");
     void selectDevice(std::vector<AvailableDeviceInfo>& dev, QString group);
     ~AddDeviceDialog();
+    void setGrammFile(QString grammFile);
 
 private slots:
 
@@ -36,6 +37,7 @@ private:
     QJsonObject generateJsonObjectFromFields();
     Ui::AddDeviceDialog *ui;
     QString _saveFilename;
+    QString _grammFile;
     QString m_group;
 };
 

@@ -6,10 +6,12 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
-AddDeviceDialog::AddDeviceDialog(QWidget *parent, QString saveFilename) :
+#include "JSGFParser/include/JSGFParser.h"
+AddDeviceDialog::AddDeviceDialog(QWidget *parent, QString saveFilename, QString grammFile) :
     CustomMaterialDialog(parent),
     ui(new Ui::AddDeviceDialog),
-    _saveFilename(saveFilename)
+    _saveFilename(saveFilename),
+    _grammFile(grammFile)
 {
     ui->setupUi(this);    
 
@@ -37,6 +39,30 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
     ui->chkNeedrecognize->setChecked(false);
     ui->leResponse->clear();
 
+    JSGFParser jsgf(_grammFile);
+    QStringList values = jsgf.getValuesByVariableName("pretext");
+    ui->cmbPretext->clear();
+    ui->cmbWhere->clear();
+    if(values.isEmpty()) {
+        ui->cmbPretext->addItems({
+                                    "в",
+                                    "на"
+                                 });
+    } else {
+        ui->cmbPretext->addItems(values);
+    }
+
+    values = jsgf.getValuesByVariableName("where");
+    if(values.isEmpty()) {
+        ui->cmbWhere->addItems({
+                                   "зале",
+                                   "кухне",
+                                   "туалете"
+                               });
+    } else {
+        ui->cmbWhere->addItems(values);
+    }
+
     m_group = group;
     ui->lstDevices->clear();
     for(auto x : dev) {
@@ -47,42 +73,77 @@ void AddDeviceDialog::selectDevice(std::vector<AvailableDeviceInfo>& dev, QStrin
     }
     if(ui->lstDevices->count())
         ui->lstDevices->setCurrentRow(0);
-    if(ui->cmbType->count())
+    if(ui->cmbType->count()) {
         ui->cmbType->setCurrentIndex(0);
+        ui->cmbType->currentIndexChanged(ui->cmbType->itemText(0));
+    }
     this->setModal(true);
     this->show();
 }
 
 void AddDeviceDialog::on_cmbType_currentIndexChanged(const QString &arg1)
 {
+    JSGFParser jsgfParser(_grammFile);
     ui->chkNeedrecognize->setEnabled(true);
     ui->chkNeedResponse->setEnabled(true);
     if(arg1 == "Переключаемое") {
+        QStringList valuesOn;
+        QStringList valuesOff;
         ui->cmbAction->clear();
         ui->cmbObject->clear();
-        ui->cmbAction->addItems(QStringList({
-                                                "включи / отключи",
-                                                "включи / погаси",
-                                                "переключи"
+        valuesOn = jsgfParser.getValuesByVariableName("SwitchOnAction");
+        valuesOff = jsgfParser.getValuesByVariableName("SwitchOffAction");
+        if(valuesOn.isEmpty() || valuesOff.isEmpty()) {
+            ui->cmbAction->addItems(QStringList({
+                                                    "включи / отключи",
+                                                    "включи / погаси",
+                                                    "переключи"
 
-                                            }));
-        ui->cmbObject->addItems(QStringList({
-                                                "лампу",
-                                                "лампочку",
-                                                "свет",
-                                                "розетку"
-                                            }));
+                                                }));
+        } else {
+            for(QString on : valuesOn) {
+                for(QString off : valuesOff) {
+                    ui->cmbAction->addItem(on + " / " + off);
+                }
+            }
+        }
+
+        valuesOn = jsgfParser.getValuesByVariableName("SwitchObj");
+        if(!valuesOn.isEmpty()) {
+            ui->cmbObject->addItems(valuesOn);
+        } else {
+            ui->cmbObject->addItems(QStringList({
+                                                    "лампу",
+                                                    "лампочку",
+                                                    "свет",
+                                                    "розетку"
+                                                }));
+        }
+
+
     } else if(arg1 == "Информационное") {
+        QStringList values;
         ui->cmbAction->clear();
         ui->cmbObject->clear();
+        values = jsgfParser.getValuesByVariableName("InfoAction");
+        if(values.isEmpty()) {
         ui->cmbAction->addItems(QStringList({
                                                 "скажи",
                                                 "какая"
                                             }));
-        ui->cmbObject->addItems(QStringList({
+        } else {
+            ui->cmbAction->addItems(values);
+        }
+
+        values = jsgfParser.getValuesByVariableName("InfoObj");
+        if(values.isEmpty()) {
+            ui->cmbObject->addItems(QStringList({
                                                 "температура",
                                                 "влажность"
                                             }));
+        } else {
+            ui->cmbObject->addItems(values);
+        }
     } else if(arg1 == "Редактируемое") {
         ui->chkNeedrecognize->setChecked(false);
         ui->chkNeedrecognize->setEnabled(false);
@@ -167,6 +228,10 @@ void AddDeviceDialog::addBtnClicked() {
     } else {
         QMessageBox::critical(this,"Ошибка", "Не выбрано ни одно устройство или устройства отсутствуют!");
     }
+}
+
+void AddDeviceDialog::setGrammFile(QString grammFile) {
+    _grammFile = grammFile;
 }
 
 QJsonObject AddDeviceDialog::generateJsonObjectFromFields() {

@@ -48,7 +48,8 @@ SOURCES += \
     Device/src/infodevice.cpp \
     Device/src/editdevice.cpp \
     ConnectionManager/src/AdafruitConnectionManager.cpp \
-    TTS/TTSSettings.cpp
+    TTS/TTSSettings.cpp \
+    JSGFParser/src/JSGFParser.cpp
 
 HEADERS += \
         dialog.h \
@@ -68,7 +69,8 @@ HEADERS += \
     Device/include/editdevice.h \
     ConnectionManager/include/AdafruitConnectionManager.h \
     ConnectionManager/include/IConnectionManager.h \
-    TTS/TTSSettings.h
+    TTS/TTSSettings.h \
+    JSGFParser/include/JSGFParser.h
 
 FORMS += \
         dialog.ui \

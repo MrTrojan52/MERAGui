@@ -100,7 +100,9 @@ Dialog::Dialog(QWidget *parent) :
     ttsSett = getTTSSettings();
     tts = new QTextToSpeech(ttsSett->getEngine(), this);
     tts->setVoice(ttsSett->getVoice());
-    addDlg = new AddDeviceDialog(this, _sdevicesFilename);
+    QSettings sett(_sfilename, QSettings::IniFormat);
+    QString gramm = sett.value("SPHINX/GRAMMAR").toString();
+    addDlg = new AddDeviceDialog(this, _sdevicesFilename, gramm);
     cdlg = new ConnectionDialog(this, _sfilename);
     rsDlg = new RecognizerSettingsDialog(this, _sfilename);
     cdlg->setModal(true);
@@ -110,6 +112,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(addButton, &QToolButton::clicked, this, &Dialog::addButtonClicked);
     connect(addDlg, &AddDeviceDialog::deviceListChanged, this, &Dialog::updateDevices);
     connect(rsDlg, &RecognizerSettingsDialog::TTSSettingsChanged, this, &Dialog::onTTSSettingsChanged);
+    connect(rsDlg, &RecognizerSettingsDialog::accepted, this, &Dialog::recognitionSettingsDlgAccepted);
     connect(tts, &QTextToSpeech::stateChanged, this, &Dialog::ttsStateChanged);
 }
 
@@ -392,6 +395,13 @@ TTSSettings* Dialog::getTTSSettings() {
     QString engine = sett.value("TTS/ENGINE").toString();
     QString voice = sett.value("TTS/VOICE").toString();
     return new TTSSettings(engine, voice);
+}
+
+void Dialog::recognitionSettingsDlgAccepted() {
+    QSettings sett(_sfilename, QSettings::IniFormat);
+    QString gramm = sett.value("SPHINX/GRAMMAR").toString();
+    if(addDlg)
+        addDlg->setGrammFile(gramm);
 }
 
 void Dialog::onTTSSettingsChanged() {
