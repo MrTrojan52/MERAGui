@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>361</height>
+    <width>618</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>9</number>
+   </property>
    <item>
     <widget class="QListWidget" name="lstDevices"/>
    </item>
@@ -35,9 +38,29 @@
      <item>
       <widget class="QLineEdit" name="leTopic">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="topMargin">
+      <number>9</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="lblname">
+       <property name="text">
+        <string>Имя:   </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="leName"/>
      </item>
     </layout>
    </item>
@@ -50,6 +73,9 @@
       <widget class="QComboBox" name="cmbType">
        <property name="toolTip">
         <string>Тип устройства</string>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
        </property>
        <property name="frame">
         <bool>true</bool>
@@ -74,7 +100,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="chkNeedrecognize">
+    <widget class="QtMaterialCheckBox" name="chkNeedrecognize">
      <property name="text">
       <string>Распознавать</string>
      </property>
@@ -112,23 +138,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cmbPretext">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <item>
-        <property name="text">
-         <string>в</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>на</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
       <widget class="QComboBox" name="cmbWhere">
        <property name="enabled">
         <bool>false</bool>
@@ -153,7 +162,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="chkNeedResponse">
+    <widget class="QtMaterialCheckBox" name="chkNeedResponse">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -179,12 +188,22 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtMaterialCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>qtmaterialcheckbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

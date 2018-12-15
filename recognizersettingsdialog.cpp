@@ -5,12 +5,26 @@
 #include <QSettings>
 #include <QDir>
 #include <QMessageBox>
+#include <qtmaterialraisedbutton.h>
+#include <QLabel>
+
 RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString settings_file) :
-    QDialog(parent),
+    CustomMaterialDialog(parent),
     ui(new Ui::RecognizerSettingsDialog),
     _sfilename(settings_file)
 {
     ui->setupUi(this);
+    this->setHeaderText("Настройки распознавания");
+
+    ui->verticalLayout_2->insertWidget(0, this->getAppbar());
+    ui->verticalLayout_2->insertWidget(0, this->closeBtn);
+    ui->verticalLayout_2->setAlignment(this->closeBtn, Qt::AlignRight);
+
+    QtMaterialRaisedButton* saveBtn = new QtMaterialRaisedButton("Сохранить", this);
+    saveBtn->setBackgroundColor(QColor(0, 188, 212));
+    saveBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+    saveBtn->setRippleStyle(Material::RippleStyle::NoRipple);
+    ui->verticalLayout_2->addWidget(saveBtn);
     /*****          Fill combobox with audio devices          *****/
     QProcess sh;
     sh.start("sh");
@@ -19,18 +33,27 @@ RecognizerSettingsDialog::RecognizerSettingsDialog(QWidget *parent, QString sett
     sh.waitForFinished();
     QString res(sh.readAllStandardOutput());
     QStringList devices = res.split('\n');
-    ui->cmbAudioDevice->addItems(devices);
+    ui->cmbAudioDevice->addItems(devices.filter(QRegExp("^(?!\s*$).+")));
+    foreach(QString engine, QTextToSpeech::availableEngines())
+    {
+        ui->cmbEngine->addItem(engine, engine);
+    }
+
+
+
     if(devices.empty())
         QMessageBox::critical(this, "Ошибка", "Отсутствуют устройства записи");
     connect(ui->leModel, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     connect(ui->leMdef, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     connect(ui->leDictionary, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
     connect(ui->leGramm, SIGNAL(textChanged(QString)), this, SLOT(fieldEdited(QString)));
+    connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveBtnClicked()));
     fillFieldsFromIniFile();
 }
 
 RecognizerSettingsDialog::~RecognizerSettingsDialog()
 {
+    delete tts;
     delete ui;
 }
 
@@ -41,10 +64,21 @@ void RecognizerSettingsDialog::fillFieldsFromIniFile() {
     ui->leDictionary->setText(sett.value("SPHINX/DICTIONARY").toString());
     ui->leGramm->setText(sett.value("SPHINX/GRAMMAR").toString());
     QString aDevice = sett.value("SPHINX/ADEVICE").toString();
+    QString engine = sett.value("TTS/ENGINE").toString();
+    QString voice = sett.value("TTS/VOICE").toString();
     if(!aDevice.isEmpty()) {
         int index = ui->cmbAudioDevice->findText(aDevice);
         if(index != -1)
             ui->cmbAudioDevice->setCurrentIndex(index);
+    }
+
+    int engineId = ui->cmbEngine->findData(engine);
+    if(engineId != -1) {
+        ui->cmbEngine->setCurrentIndex(engineId);
+        int itemId = ui->cmbVoice->findData(voice);
+        if(itemId != -1) {
+            ui->cmbVoice->setCurrentIndex(itemId);
+        }
     }
 }
 
@@ -108,7 +142,7 @@ void RecognizerSettingsDialog::on_tbGrammSelect_clicked()
     ui->leGramm->setText(QFileDialog::getOpenFileName(this, "Выберите файл с грамматикой"));
 }
 
-void RecognizerSettingsDialog::on_psbSave_clicked()
+void RecognizerSettingsDialog::saveBtnClicked()
 {
     if(validateAllFields()) {
         if(_fieldsStateChanged) {
@@ -118,8 +152,12 @@ void RecognizerSettingsDialog::on_psbSave_clicked()
             sett.setValue("SPHINX/DICTIONARY", ui->leDictionary->text());
             sett.setValue("SPHINX/GRAMMAR", ui->leGramm->text());
             sett.setValue("SPHINX/ADEVICE", ui->cmbAudioDevice->currentText());
+            sett.setValue("TTS/ENGINE", ui->cmbEngine->currentData().toString());
+            sett.setValue("TTS/VOICE", ui->cmbVoice->currentData().toString());
+            TTSSettingsChanged();
         }
-        accept();
+
+        emit accept();
     }
 }
 
@@ -135,4 +173,17 @@ void RecognizerSettingsDialog::on_cmbAudioDevice_currentIndexChanged(int index)
     Q_UNUSED(index)
     this->_fieldsStateChanged = true;
     ui->leGramm->setStyleSheet("");
+}
+
+void RecognizerSettingsDialog::on_cmbEngine_currentIndexChanged(int index)
+{
+    delete tts;
+    tts = new QTextToSpeech(ui->cmbEngine->itemData(index).toString());
+    QVector<QVoice> voices = tts->availableVoices();
+    foreach(const QVoice& voice, voices) {
+        ui->cmbVoice->addItem(QString("%1 - %2 - %3").arg(voice.name())
+                          .arg(QVoice::genderName(voice.gender()))
+                          .arg(QVoice::ageName(voice.age())), voice.name());
+
+    }
 }

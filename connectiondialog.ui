@@ -32,15 +32,7 @@
    <string>Connection Properties</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLineEdit {
-	background-color: rgba(239,239,239,0);
-	border: 0px;
-	border-bottom: 2px solid #ABABAB;
-}
-
-QLineEdit:hover {
-	border-bottom: 2px solid #2fbbd2;
-}</string>
+   <string notr="true"/>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -49,24 +41,71 @@ QLineEdit:hover {
    <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
+    <layout class="QHBoxLayout" name="HLHost">
+     <item alignment="Qt::AlignLeft">
+      <widget class="QLabel" name="lblHost">
        <property name="text">
         <string>HostName: </string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="editHost"/>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbHost">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>io.adafruit.com</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="HLPort">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="lblPort">
        <property name="text">
         <string>Port: </string>
        </property>
@@ -82,7 +121,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>37</width>
+         <width>42</width>
          <height>20</height>
         </size>
        </property>
@@ -98,9 +137,9 @@ QLineEdit:hover {
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="HLUser">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="lblUsername">
        <property name="text">
         <string>Username: </string>
        </property>
@@ -116,7 +155,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>1</width>
+         <width>3</width>
          <height>20</height>
         </size>
        </property>
@@ -128,9 +167,9 @@ QLineEdit:hover {
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="HLPassword">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="lblPassword">
        <property name="text">
         <string>Password: </string>
        </property>
@@ -146,7 +185,7 @@ QLineEdit:hover {
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>1</width>
+         <width>6</width>
          <height>20</height>
         </size>
        </property>
@@ -156,20 +195,6 @@ QLineEdit:hover {
       <widget class="QLineEdit" name="editPassword"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pbSave">
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pbConnect">
-     <property name="text">
-      <string>Connect</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

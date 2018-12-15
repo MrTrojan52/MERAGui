@@ -1,16 +1,16 @@
 #ifndef CONNECTIONDIALOG_H
 #define CONNECTIONDIALOG_H
 
-#include <QDialog>
+#include "custommaterialdialog.h"
 #include <QValidator>
 #include <QMessageBox>
-#include <tuple>
 #include "connectiondata.h"
+#include "qtmaterialappbar.h"
 namespace Ui {
 class ConnectionDialog;
 }
 
-class ConnectionDialog : public QDialog
+class ConnectionDialog : public CustomMaterialDialog
 {
     Q_OBJECT
 
@@ -20,11 +20,12 @@ public:
     ~ConnectionDialog();
 
 private slots:
-    void on_pbSave_clicked();
+    void saveBtnClicked();
 
-    void on_pbConnect_clicked();
+    void connectBtnClicked();
 
 private:
+    bool validateFields();
     Ui::ConnectionDialog *ui;
     QString _sfilename = "connection_info.ini";
 };

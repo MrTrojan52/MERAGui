@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += mqtt
+QT       += texttospeech
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MERAGui
@@ -24,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/include/pocketsphinx
 INCLUDEPATH += /usr/local/include/sphinxbase
+INCLUDEPATH += $$PWD/MaterialWidgets/include
 
 LIBS +=-lpocketsphinx
 LIBS += -lsphinxbase
 LIBS += -lsphinxad
+LIBS += $$PWD/MaterialWidgets/lib/libcomponents.a
 
 CONFIG += c++11
 
@@ -36,24 +39,38 @@ SOURCES += \
         dialog.cpp \        
         SphinxReconizer/src/SphinxRecognizer.cpp \
     connectiondialog.cpp \
-    SwitchWidget/src/switch.cpp \
     Device/src/ADevice.cpp \
     Device/src/switchdevice.cpp \
     recognizersettingsdialog.cpp \
-    adddevicedialog.cpp
+    adddevicedialog.cpp \
+    custommaterialdialog.cpp \
+    Factories/src/DeviceFactory.cpp \
+    Device/src/infodevice.cpp \
+    Device/src/editdevice.cpp \
+    ConnectionManager/src/AdafruitConnectionManager.cpp \
+    TTS/TTSSettings.cpp \
+    JSGFParser/src/JSGFParser.cpp
 
 HEADERS += \
         dialog.h \
         SphinxReconizer/include/SphinxRecognizer.h \
     connectiondialog.h \
     connectiondata.h \
-    SwitchWidget/include/switch.h \
-    SwitchWidget/include/style.h \
     Device/include/IDevice.h \
     Device/include/adevice.h \
     Device/include/switchdevice.h \
     recognizersettingsdialog.h \
-    adddevicedialog.h
+    adddevicedialog.h \
+    custommaterialdialog.h \
+    Device/include/availabledeviceinfo.h \
+    Factories/include/IFactory.h \
+    Factories/include/devicefactory.h \
+    Device/include/infodevice.h \
+    Device/include/editdevice.h \
+    ConnectionManager/include/AdafruitConnectionManager.h \
+    ConnectionManager/include/IConnectionManager.h \
+    TTS/TTSSettings.h \
+    JSGFParser/include/JSGFParser.h
 
 FORMS += \
         dialog.ui \

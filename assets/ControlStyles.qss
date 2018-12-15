@@ -1,0 +1,39 @@
+QComboBox {
+    background-color: white;
+    selection-background-color: #00BCD4;
+    selection-color: white;
+    border: 1px solid #ABABAB;
+    height: 22px;
+}
+
+QComboBox::drop-down {
+    background-color: #00BCD4;
+    width: 23px;
+    height: 22px;
+}
+
+QComboBox::down-arrow {	
+    image: url(:/images/assets/downarrow.png);	
+    width: 23px;
+    height: 22px;
+}
+
+QLineEdit {
+    background-color: rgba(239,239,239,0);
+    border: 0px;
+    border-bottom: 2px solid #ABABAB;
+}
+
+QLineEdit:hover {
+    border-bottom: 2px solid #00BCD4;
+}
+
+QLineEdit:disabled {
+    border-bottom-style: dotted;
+}
+
+
+QListWidget::item:selected {
+    border: 1px solid #ABABAB;
+    background-color: #00BCD4;
+}

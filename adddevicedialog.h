@@ -1,24 +1,28 @@
 #ifndef ADDDEVICEDIALOG_H
 #define ADDDEVICEDIALOG_H
 
-#include <QDialog>
+#include "custommaterialdialog.h"
 #include "Device/include/adevice.h"
 #include <QListWidgetItem>
+#include "qtmaterialappbar.h"
+#include "Device/include/availabledeviceinfo.h"
 namespace Ui {
 class AddDeviceDialog;
 }
 
-class AddDeviceDialog : public QDialog
+class AddDeviceDialog : public CustomMaterialDialog
 {
     Q_OBJECT
 
 public:
-    AddDeviceDialog(QWidget *parent = nullptr, QString saveFilename = "devices.ini");
-    void selectDevice(std::vector<ADevice*>& dev, QString group);
+    AddDeviceDialog(QWidget *parent = nullptr, QString saveFilename = "devices.json", QString grammFile = "");
+    void selectDevice(std::vector<AvailableDeviceInfo>& dev, QString group);
     ~AddDeviceDialog();
+    void setGrammFile(QString grammFile);
 
 private slots:
-    void on_lstDevices_itemChanged(QListWidgetItem *item);
+
+    void addBtnClicked();
 
     void on_cmbType_currentIndexChanged(const QString &arg1);
 
@@ -26,11 +30,15 @@ private slots:
 
     void on_chkNeedResponse_toggled(bool checked);
 
+    void on_lstDevices_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+signals:
+    void deviceListChanged();
 private:
+    QJsonObject generateJsonObjectFromFields();
     Ui::AddDeviceDialog *ui;
-    std::vector<ADevice*> _devices;
-    QString _group;
     QString _saveFilename;
+    QString _grammFile;
+    QString m_group;
 };
 
 #endif // ADDDEVICEDIALOG_H
